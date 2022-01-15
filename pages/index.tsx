@@ -1,18 +1,17 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import Layout from '../components/Layout';
 
 const Home: NextPage = () => {
   return (
-    <div>
+    <Layout>
       <Head>
         <title>Gazouilleur</title>
         <meta name="description" content="Twitter Clone" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <h1 className="text-3xl text-slate-800">Gazouilleur</h1>
-      </main>
-    </div>
+      <main></main>
+    </Layout>
   );
 };
 
