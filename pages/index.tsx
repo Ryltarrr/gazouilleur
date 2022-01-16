@@ -33,7 +33,7 @@ const Home: NextPage<Props> = ({ posts }) => {
                 decoration-orange-500 hover:text-orange-500
                 dark:decoration-orange-400 dark:hover:text-orange-400"
           >
-            Créer
+            Create new post
           </a>
         </Link>
         {posts.map((p) => (
@@ -48,7 +48,7 @@ const Home: NextPage<Props> = ({ posts }) => {
                 decoration-orange-500 hover:text-orange-500
                 dark:decoration-orange-400 dark:hover:text-orange-400"
               >
-                Voir la page
+                Open the post
               </a>
             </Link>
           </div>
