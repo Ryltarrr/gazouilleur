@@ -16,7 +16,7 @@ export default class NextDocument extends Document {
 
   render() {
     return (
-      <Html lang="en" dir="ltr">
+      <Html lang="en" dir="ltr" className="dark:bg-zinc-900">
         <Head>
           <meta name="application-name" content={APP_NAME} />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,7 +40,7 @@ export default class NextDocument extends Document {
           <link rel="manifest" href="/manifest.json" />
           <link rel="shortcut icon" href="/favicon.ico" />
         </Head>
-        <body className="dark:bg-zinc-900">
+        <body>
           <Main />
           <NextScript />
         </body>
