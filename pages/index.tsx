@@ -1,19 +1,23 @@
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Layout from "../components/Layout";
-import { Post } from "@prisma/client";
 import Link from "next/link";
 import prisma from "../lib/prisma";
+import PostComponent from "../components/Post";
+import { PostWithUser } from "../types";
 
 type Props = {
-  posts: Post[];
+  posts: PostWithUser[];
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+  const postsAndUsers: PostWithUser[] = await prisma.post.findMany({
+    include: { User: true },
+    orderBy: { createdAt: "desc" },
+  });
   return {
     props: {
-      posts,
+      posts: postsAndUsers,
     },
   };
 };
@@ -37,21 +41,7 @@ const Home: NextPage<Props> = ({ posts }) => {
           </a>
         </Link>
         {posts.map((p) => (
-          <div
-            key={p.id}
-            className="my-3 p-5 bg-slate-200 dark:bg-slate-800 rounded-md"
-          >
-            <p>{p.content}</p>
-            <Link href={`/${p.id}`}>
-              <a
-                className="transition underline
-                decoration-orange-500 hover:text-orange-500
-                dark:decoration-orange-400 dark:hover:text-orange-400"
-              >
-                Open the post
-              </a>
-            </Link>
-          </div>
+          <PostComponent key={p.id} post={p} />
         ))}
       </main>
     </Layout>

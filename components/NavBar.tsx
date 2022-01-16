@@ -7,9 +7,9 @@ export default function NavBar() {
   const { data: session, status } = useSession();
 
   return (
-    <nav className="container mx-auto flex justify-between items-center py-5 ">
+    <nav className="flex justify-between items-center m-0 p-4">
       <Link href="/">
-        <a className="font-black">Gazouilleur</a>
+        <a className="text-xl font-black">Gazouilleur</a>
       </Link>
       <div className="flex space-x-3 items-center">
         {session ? (
@@ -24,7 +24,7 @@ export default function NavBar() {
                 />
               </div>
             )}
-            <div>{session?.user?.email}</div>
+            <div className="hidden sm:inline">{session?.user?.email}</div>
             <button onClick={() => signOut()}>Sign out</button>
           </>
         ) : (

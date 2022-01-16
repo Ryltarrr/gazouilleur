@@ -7,7 +7,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <NavBar />
-      <div className="container mx-auto">{children}</div>
+      <main className="container mx-auto">{children}</main>
     </>
   );
 }

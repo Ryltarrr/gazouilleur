@@ -19,4 +19,10 @@ export default NextAuth({
     // ...add more providers here
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.user.id = user.id;
+      return Promise.resolve(session);
+    },
+  },
 });

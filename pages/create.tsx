@@ -1,10 +1,9 @@
-import { Prisma } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import Layout from "../components/Layout";
 
-export async function savePost(post: Prisma.PostCreateInput) {
+export async function savePost(post: Partial<Post>) {
   const response = await fetch("/api/post/create", {
     method: "POST",
     body: JSON.stringify(post),
@@ -20,14 +19,12 @@ export async function savePost(post: Prisma.PostCreateInput) {
 const maxLength = 280;
 const CreatePage: NextPage = () => {
   const [content, setContent] = useState("");
-  const router = useRouter();
   return (
     <Layout>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           await savePost({ content });
-          router.back();
         }}
       >
         <label className="block">Contenu</label>

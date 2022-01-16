@@ -1,11 +1,12 @@
-import { Post } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import PostComponent from "../components/Post";
 import prisma from "../lib/prisma";
+import { PostWithUser } from "../types";
 
 type PostPageProps = {
-  post: Post;
+  post: PostWithUser;
 };
 
 async function deletePost(id: string) {
@@ -23,7 +24,10 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   context
 ) => {
   const postId = context.params?.id as string;
-  const post = await prisma.post.findUnique({ where: { id: postId } });
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: { User: true },
+  });
   if (post) {
     return {
       props: {
@@ -40,23 +44,23 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
   const router = useRouter();
   return (
     <Layout>
-      <div className="my-3 p-5 bg-slate-200 dark:bg-slate-800 rounded-md">
-        {post.content}
+      <PostComponent post={post} />
+      <div className="flex justify-end">
+        <button
+          className="px-3 py-2 rounded-md
+        bg-red-500 hover:bg-red-600
+        text-white
+        transition
+        disabled:bg-gray-500 dark:disabled:bg-gray-400
+        disabled:text-gray-200 dark:disabled:text-gray-200 disabled:cursor-not-allowed"
+          onClick={async () => {
+            await deletePost(post.id);
+            router.back();
+          }}
+        >
+          Delete
+        </button>
       </div>
-      <button
-        className="px-3 py-2 rounded-md
-          bg-red-500
-          hover:bg-red-600
-          transition
-          disabled:bg-gray-500 dark:disabled:bg-gray-400
-          disabled:text-gray-200 dark:disabled:text-gray-200 disabled:cursor-not-allowed"
-        onClick={async () => {
-          await deletePost(post.id);
-          router.back();
-        }}
-      >
-        Delete
-      </button>
     </Layout>
   );
 };

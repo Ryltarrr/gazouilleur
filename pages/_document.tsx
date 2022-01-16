@@ -39,19 +39,8 @@ export default class NextDocument extends Document {
           />
           <link rel="manifest" href="/manifest.json" />
           <link rel="shortcut icon" href="/favicon.ico" />
-          <style>{`
-            html, body, #__next {
-              height: 100%;
-            }
-            #__next {
-              margin: 0 auto;
-            }
-            h1 {
-              text-align: center;
-            }
-            `}</style>
         </Head>
-        <body>
+        <body className="dark:bg-zinc-900">
           <Main />
           <NextScript />
         </body>
