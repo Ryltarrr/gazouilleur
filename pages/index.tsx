@@ -6,6 +6,7 @@ import prisma from "../lib/prisma";
 import PostComponent from "../components/Post";
 import { PostWithUser } from "../types";
 import useSWR, { SWRConfig } from "swr";
+import { RefreshIcon } from "@heroicons/react/solid";
 
 type Props = {
   fallback: {
@@ -28,8 +29,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 };
 
 const Home: NextPage<Props> = ({ fallback }) => {
-  const { data: posts } = useSWR<PostWithUser[]>("/api/post", (key) =>
-    fetch(key).then((res) => res.json())
+  const { data: posts, isValidating } = useSWR<PostWithUser[]>(
+    "/api/post",
+    (key) => fetch(key).then((res) => res.json())
   );
 
   return (
@@ -50,6 +52,11 @@ const Home: NextPage<Props> = ({ fallback }) => {
               Create new post
             </a>
           </Link>
+          {isValidating && (
+            <div className="flex justify-center transition-all">
+              <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
+            </div>
+          )}
           {posts && posts.map((p) => <PostComponent key={p.id} post={p} />)}
         </main>
       </Layout>
