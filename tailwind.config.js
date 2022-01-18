@@ -7,7 +7,21 @@ module.exports = {
     container: {
       padding: "1rem",
     },
-    extend: {},
+    extend: {
+      animation: {
+        "reverse-spin": "reverse-spin 1s linear infinite",
+      },
+      keyframes: {
+        "reverse-spin": {
+          from: {
+            transform: "rotate(360deg)",
+          },
+          to: {
+            transform: "rotate(0deg)",
+          },
+        },
+      },
+    },
   },
   darkMode: "class",
   plugins: [],
