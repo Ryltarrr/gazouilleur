@@ -24,9 +24,9 @@ const CreatePage: NextPage = () => {
   return (
     <Layout>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          savePost({ content });
+          await savePost({ content });
           router.back();
         }}
       >
