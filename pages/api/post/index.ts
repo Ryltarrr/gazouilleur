@@ -1,15 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../lib/prisma";
+import getPostsWithUsers from "../../../lib/getPostsAndUsers";
+import { PostWithUser } from "../../../types";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const posts = await prisma.post.findMany({
-      include: { User: true },
-      orderBy: { createdAt: "desc" },
-    });
+    let cursor = req.query.cursor;
+    if (typeof cursor === "object") {
+      cursor = cursor[0];
+    }
+    const posts: PostWithUser[] = await getPostsWithUsers(cursor);
     return res.status(200).json(posts);
   } catch (err) {
     console.error(err);
