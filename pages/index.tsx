@@ -39,8 +39,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 const getKey = (pageIndex: number, previousPageData: PostWithUser[]) => {
   // reached the end
   if (previousPageData && previousPageData.length === 0) {
-    console.log("on retourne null");
-    console.log({ pageIndex, previousPageData });
     return null;
   }
 
@@ -55,7 +53,6 @@ const getKey = (pageIndex: number, previousPageData: PostWithUser[]) => {
 const Home: NextPage<Props> = ({ fallback }) => {
   const {
     data: postsPages,
-    isValidating,
     error,
     size,
     setSize,
@@ -90,8 +87,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
               Create new post
             </a>
           </Link>
-          {isValidating && (
-            <div className="absolute top-10">
+          {isLoadingInitialData && (
+            <div className="absolute top-10 inset-x-0">
               <div className="flex justify-center transition-all">
                 <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
               </div>
@@ -100,19 +97,21 @@ const Home: NextPage<Props> = ({ fallback }) => {
           {postsPages?.map((posts) =>
             posts?.map((p) => <PostComponent key={p.id} post={p} />)
           )}
-          <div className="flex justify-center items-center space-x-2">
-            <Button
-              className="my-3"
-              disabled={isReachingEnd}
-              onClick={() => setSize(size + 1)}
-            >
-              load more
-            </Button>
+          {!isLoadingInitialData && (
+            <div className="flex justify-center items-center space-x-2">
+              <Button
+                className="my-3"
+                disabled={isReachingEnd}
+                onClick={() => setSize(size + 1)}
+              >
+                load more
+              </Button>
 
-            {isLoadingMore && (
-              <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
-            )}
-          </div>
+              {isLoadingMore && (
+                <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
+              )}
+            </div>
+          )}
         </main>
       </Layout>
     </SWRConfig>
