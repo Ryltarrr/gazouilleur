@@ -2,6 +2,8 @@ import type { Post } from "@prisma/client";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useSWRConfig } from "swr";
+import { PrimaryButton } from "../components/Button";
 import Layout from "../components/Layout";
 
 export async function savePost(post: Partial<Post>) {
@@ -20,35 +22,35 @@ export async function savePost(post: Partial<Post>) {
 const maxLength = 280;
 const CreatePage: NextPage = () => {
   const [content, setContent] = useState("");
+  const { mutate } = useSWRConfig();
   const router = useRouter();
+
   return (
     <Layout>
       <form
-        onSubmit={async (e) => {
+        onSubmit={(e) => {
           e.preventDefault();
-          await savePost({ content });
+          savePost({ content }).then(() => {
+            mutate("/api/post");
+          });
           router.back();
         }}
       >
-        <label className="block">Content</label>
+        <label className="block mb-1">Content</label>
         <textarea
-          className="block mb-5 rounded-md w-full"
+          className="block mb-5 rounded-md w-full border-2 border-orange-500 focus:outline-none"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           maxLength={maxLength}
         />
         <div className="flex justify-between items-center">
           {content.length}/{maxLength}
-          <button
-            className="px-3 py-2 rounded-md
-          bg-orange-500 dark:bg-orange-400
-          disabled:bg-gray-500 dark:disabled:bg-gray-400
-          disabled:text-gray-200 dark:disabled:text-gray-200 disabled:cursor-not-allowed"
+          <PrimaryButton
             disabled={content.length === 0 || content.length > maxLength}
             type="submit"
           >
             Valider
-          </button>
+          </PrimaryButton>
         </div>
       </form>
     </Layout>
