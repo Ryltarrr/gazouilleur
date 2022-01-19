@@ -1,5 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
+import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
 import prisma from "../lib/prisma";
@@ -46,20 +47,14 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
     <Layout>
       <PostComponent post={post} />
       <div className="flex justify-end">
-        <button
-          className="px-3 py-2 rounded-md
-        bg-red-500 hover:bg-red-600
-        text-white
-        transition
-        disabled:bg-gray-500 dark:disabled:bg-gray-400
-        disabled:text-gray-200 dark:disabled:text-gray-200 disabled:cursor-not-allowed"
+        <DeleteButton
           onClick={async () => {
             await deletePost(post.id);
             router.back();
           }}
         >
           Delete
-        </button>
+        </DeleteButton>
       </div>
     </Layout>
   );
