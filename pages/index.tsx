@@ -10,6 +10,7 @@ import { RefreshIcon } from "@heroicons/react/solid";
 import getPostsWithUsers from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
 import { PAGE_SIZE } from "../lib/constants";
+import { useSession } from "next-auth/react";
 
 type Props = {
   fallback: {
@@ -60,6 +61,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
     fetch(key).then((res) => res.json())
   );
 
+  const { status: sessionStatus } = useSession();
+
   const isLoadingInitialData = !postsPages && !error;
   const isLoadingMore =
     isLoadingInitialData ||
@@ -78,15 +81,17 @@ const Home: NextPage<Props> = ({ fallback }) => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main>
-          <Link href="/create">
-            <a
-              className="transition underline
-                decoration-orange-500 hover:text-orange-500
-                dark:decoration-orange-400 dark:hover:text-orange-400"
-            >
-              Create new post
-            </a>
-          </Link>
+          {sessionStatus === "authenticated" ? (
+            <Link href="/create">
+              <a
+                className="transition underline
+        decoration-orange-500 hover:text-orange-500
+        dark:decoration-orange-400 dark:hover:text-orange-400"
+              >
+                Create new post
+              </a>
+            </Link>
+          ) : null}
           {isLoadingInitialData && (
             <div className="absolute top-10 inset-x-0">
               <div className="flex justify-center transition-all">

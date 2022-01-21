@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
@@ -42,20 +43,23 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
 };
 
 const PostPage: NextPage<PostPageProps> = ({ post }) => {
+  const { data: session } = useSession();
   const router = useRouter();
   return (
     <Layout>
       <PostComponent post={post} />
-      <div className="flex justify-end">
-        <DeleteButton
-          onClick={async () => {
-            await deletePost(post.id);
-            router.back();
-          }}
-        >
-          Delete
-        </DeleteButton>
-      </div>
+      {session?.user.id === post.authorId ? (
+        <div className="flex justify-end">
+          <DeleteButton
+            onClick={async () => {
+              await deletePost(post.id);
+              router.back();
+            }}
+          >
+            Delete
+          </DeleteButton>
+        </div>
+      ) : null}
     </Layout>
   );
 };
