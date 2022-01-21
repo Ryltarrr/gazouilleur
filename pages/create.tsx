@@ -49,7 +49,7 @@ const CreatePage: NextPage = () => {
             disabled={content.length === 0 || content.length > maxLength}
             type="submit"
           >
-            Valider
+            Create
           </PrimaryButton>
         </div>
       </form>

@@ -2,6 +2,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import ThemeChanger from "./ThemeChanger";
 import Image from "next/image";
+import { LoginIcon, LogoutIcon } from "@heroicons/react/solid";
 
 export default function NavBar() {
   const { data: session, status } = useSession();
@@ -25,12 +26,20 @@ export default function NavBar() {
               </div>
             )}
             <div className="hidden sm:inline">{session?.user?.email}</div>
-            <button onClick={() => signOut()}>Sign out</button>
+            <button onClick={() => signOut()}>
+              <span className="hidden sm:inline mr-2">Sign out</span>
+              <LogoutIcon className="h-5 w-5 inline" />
+            </button>
           </>
         ) : (
           <>
             {status === "unauthenticated" ? (
-              <button onClick={() => signIn()}>Sign in</button>
+              <>
+                <button onClick={() => signIn()}>
+                  <span className="hidden sm:inline mr-2">Sign in</span>
+                  <LoginIcon className="h-5 w-5 inline" />
+                </button>
+              </>
             ) : (
               <div>Loading...</div>
             )}
