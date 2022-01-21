@@ -7,9 +7,9 @@ type PostProps = { post: PostWithUser };
 const PostComponent = ({ post: { content, id, User } }: PostProps) => {
   return (
     <Link href={`/${id}`} passHref>
-      <a
+      <div
         key={id}
-        className="flex my-3 px-3 py-4 bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 rounded-md space-x-2"
+        className="flex cursor-pointer my-3 px-3 py-4 bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 rounded-md space-x-2"
       >
         <div>
           {User.image && (
@@ -25,22 +25,13 @@ const PostComponent = ({ post: { content, id, User } }: PostProps) => {
         </div>
         <div className="flex-1">
           <Link href="/">
-            <a className="no-underline hover:underline transition-all">
+            <span className="no-underline hover:underline transition-all">
               {User.name && User.name}
-            </a>
+            </span>
           </Link>
           <div className="text-sm opacity-70">{content}</div>
         </div>
-        {/* <Link href={`/${id}`}>
-        <a
-          className="transition underline
-                   decoration-orange-500 hover:text-orange-500
-                   dark:decoration-orange-400 dark:hover:text-orange-400"
-        >
-          Open the post
-        </a>
-      </Link> */}
-      </a>
+      </div>
     </Link>
   );
 };
