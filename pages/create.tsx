@@ -1,7 +1,8 @@
 import type { Post } from "@prisma/client";
 import { NextPage } from "next";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 import { PrimaryButton } from "../components/Button";
 import Layout from "../components/Layout";
@@ -22,8 +23,15 @@ export async function savePost(post: Partial<Post>) {
 const maxLength = 280;
 const CreatePage: NextPage = () => {
   const [content, setContent] = useState("");
+  const { status } = useSession();
   const { mutate } = useSWRConfig();
   const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      signIn();
+    }
+  }, [status]);
 
   return (
     <Layout>
