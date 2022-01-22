@@ -1,9 +1,11 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useSWRConfig } from "swr";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
+import { API_POSTS } from "../lib/constants";
 import prisma from "../lib/prisma";
 import { PostWithUser } from "../types";
 
@@ -12,7 +14,7 @@ type PostPageProps = {
 };
 
 async function deletePost(id: string) {
-  const response = await fetch(`/api/post/delete/${id}`, {
+  const response = await fetch(`${API_POSTS}/delete/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) {
@@ -44,6 +46,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
 
 const PostPage: NextPage<PostPageProps> = ({ post }) => {
   const { data: session } = useSession();
+  const { mutate } = useSWRConfig();
   const router = useRouter();
   return (
     <Layout>
@@ -51,8 +54,8 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
       {session?.user.id === post.authorId ? (
         <div className="flex justify-end">
           <DeleteButton
-            onClick={async () => {
-              await deletePost(post.id);
+            onClick={() => {
+              deletePost(post.id).then(() => mutate(API_POSTS));
               router.back();
             }}
           >

@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 import { PrimaryButton } from "../components/Button";
 import Layout from "../components/Layout";
+import { API_POSTS } from "../lib/constants";
 
 export async function savePost(post: Partial<Post>) {
-  const response = await fetch("/api/post/create", {
+  const response = await fetch(`${API_POSTS}/create`, {
     method: "POST",
     body: JSON.stringify(post),
   });
@@ -39,7 +40,7 @@ const CreatePage: NextPage = () => {
         onSubmit={(e) => {
           e.preventDefault();
           savePost({ content }).then(() => {
-            mutate("/api/post");
+            mutate(API_POSTS);
           });
           router.back();
         }}
