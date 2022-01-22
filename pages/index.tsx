@@ -44,11 +44,11 @@ const getKey = (pageIndex: number, previousPageData: PostWithUser[]) => {
   }
 
   // first page, we don't have `previousPageData`
-  if (pageIndex === 0) return `/api/post?limit=10`;
+  if (pageIndex === 0) return `/api/post`;
 
   // add the cursor to the API endpoint
   const cursor = previousPageData[previousPageData.length - 1].id;
-  return `/api/post?cursor=${cursor}&limit=10`;
+  return `/api/post?cursor=${cursor}`;
 };
 
 const Home: NextPage<Props> = ({ fallback }) => {

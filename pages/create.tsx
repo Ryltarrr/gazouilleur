@@ -47,6 +47,7 @@ const CreatePage: NextPage = () => {
         <label className="block mb-1">Content</label>
         <textarea
           className="block mb-5 rounded-md w-full border-2 border-orange-500 focus:outline-none"
+          autoFocus
           value={content}
           onChange={(e) => setContent(e.target.value)}
           maxLength={maxLength}
