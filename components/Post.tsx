@@ -24,7 +24,7 @@ const PostComponent = ({ post: { content, id, User } }: PostProps) => {
           )}
         </div>
         <div className="flex-1">
-          <Link href="/">
+          <Link href={`/profile/${User.id}`}>
             <span className="no-underline hover:underline transition-all">
               {User.name && User.name}
             </span>
