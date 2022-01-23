@@ -10,7 +10,7 @@ const getPostsWithUsers = (cursor: string | undefined) => {
           id: cursor,
         }
       : undefined,
-    include: { User: true },
+    include: { author: true },
     orderBy: { createdAt: "desc" },
   });
 };

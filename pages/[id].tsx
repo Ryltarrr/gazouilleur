@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   const postId = context.params?.id as string;
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    include: { User: true },
+    include: { author: true },
   });
   if (post) {
     return {
