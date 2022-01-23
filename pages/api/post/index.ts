@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import getPostsWithUsers from "../../../lib/getPostsAndUsers";
-import { PostWithUser } from "../../../types";
+import getPostsWithUsersAndLikes from "../../../lib/getPostsAndUsers";
+import { PostWithUserAndLikes } from "../../../types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,7 +11,7 @@ export default async function handler(
     if (typeof cursor === "object") {
       cursor = cursor[0];
     }
-    const posts: PostWithUser[] = await getPostsWithUsers(cursor);
+    const posts: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(cursor);
     return res.status(200).json(posts);
   } catch (err) {
     console.error(err);

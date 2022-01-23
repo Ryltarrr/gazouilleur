@@ -3,18 +3,18 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import Link from "next/link";
 import PostComponent from "../components/Post";
-import { PostWithUser } from "../types";
+import { PostWithUserAndLikes } from "../types";
 import { SWRConfig } from "swr";
 import useSWRInfinite from "swr/infinite";
 import { RefreshIcon } from "@heroicons/react/solid";
-import getPostsWithUsers from "../lib/getPostsAndUsers";
+import getPostsWithUsersAndLikes from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
 import { API_POSTS, PAGE_SIZE } from "../lib/constants";
 import { useSession } from "next-auth/react";
 
 type Props = {
   fallback: {
-    [API_POSTS]: PostWithUser[];
+    [API_POSTS]: PostWithUserAndLikes[];
   };
 };
 
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     cursor = cursor[0];
   }
 
-  const postsAndUsers: PostWithUser[] = await getPostsWithUsers(cursor);
+  const postsAndUsers: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(cursor);
 
   return {
     props: {
@@ -37,7 +37,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   };
 };
 
-const getKey = (pageIndex: number, previousPageData: PostWithUser[]) => {
+const getKey = (
+  pageIndex: number,
+  previousPageData: PostWithUserAndLikes[]
+) => {
   // reached the end
   if (previousPageData && previousPageData.length === 0) {
     return null;
@@ -57,7 +60,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
     error,
     size,
     setSize,
-  } = useSWRInfinite<PostWithUser[]>(getKey, (key) =>
+  } = useSWRInfinite<PostWithUserAndLikes[]>(getKey, (key) =>
     fetch(key).then((res) => res.json())
   );
 

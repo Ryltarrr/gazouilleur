@@ -7,10 +7,10 @@ import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
 import { API_POSTS } from "../lib/constants";
 import prisma from "../lib/prisma";
-import { PostWithUser } from "../types";
+import { PostWithUserAndLikes } from "../types";
 
 type PostPageProps = {
-  post: PostWithUser;
+  post: PostWithUserAndLikes;
 };
 
 async function deletePost(id: string) {
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   const postId = context.params?.id as string;
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    include: { author: true },
+    include: { author: true, likes: true },
   });
   if (post) {
     return {
