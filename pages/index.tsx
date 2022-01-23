@@ -9,12 +9,12 @@ import useSWRInfinite from "swr/infinite";
 import { RefreshIcon } from "@heroicons/react/solid";
 import getPostsWithUsers from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
-import { PAGE_SIZE } from "../lib/constants";
+import { API_POSTS, PAGE_SIZE } from "../lib/constants";
 import { useSession } from "next-auth/react";
 
 type Props = {
   fallback: {
-    "/api/post": PostWithUser[];
+    [API_POSTS]: PostWithUser[];
   };
 };
 
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   return {
     props: {
       fallback: {
-        "/api/post": postsAndUsers,
+        [API_POSTS]: postsAndUsers,
       },
     },
   };
@@ -44,11 +44,11 @@ const getKey = (pageIndex: number, previousPageData: PostWithUser[]) => {
   }
 
   // first page, we don't have `previousPageData`
-  if (pageIndex === 0) return `/api/post?limit=10`;
+  if (pageIndex === 0) return API_POSTS;
 
   // add the cursor to the API endpoint
   const cursor = previousPageData[previousPageData.length - 1].id;
-  return `/api/post?cursor=${cursor}&limit=10`;
+  return `${API_POSTS}?cursor=${cursor}`;
 };
 
 const Home: NextPage<Props> = ({ fallback }) => {

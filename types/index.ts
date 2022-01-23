@@ -1,3 +1,3 @@
 import { Post, User } from "@prisma/client";
 
-export type PostWithUser = Post & { User: User };
+export type PostWithUser = Post & { author: User };
