@@ -88,13 +88,10 @@ const Home: NextPage<Props> = ({ fallback }) => {
                 className="my-3"
                 disabled={isReachingEnd}
                 onClick={() => setSize(size + 1)}
+                isLoading={isLoadingMore}
               >
                 load more
               </Button>
-
-              {isLoadingMore && (
-                <RefreshIcon className="h-7 aspect-square animate-reverse-spin" />
-              )}
             </div>
           )}
         </main>
