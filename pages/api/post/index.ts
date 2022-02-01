@@ -11,7 +11,9 @@ export default async function handler(
     if (typeof cursor === "object") {
       cursor = cursor[0];
     }
-    const posts: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(cursor);
+    const posts: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(
+      cursor
+    );
     return res.status(200).json(posts);
   } catch (err) {
     console.error(err);

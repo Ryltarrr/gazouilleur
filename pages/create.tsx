@@ -3,10 +3,10 @@ import { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useSWRConfig } from "swr";
 import { PrimaryButton } from "../components/Button";
 import Layout from "../components/Layout";
 import { API_POSTS } from "../lib/constants";
+import { useGetPostsInfinite } from "../lib/hooks";
 
 export async function savePost(post: Partial<Post>) {
   const response = await fetch(`${API_POSTS}/create`, {
@@ -24,8 +24,9 @@ export async function savePost(post: Partial<Post>) {
 const maxLength = 280;
 const CreatePage: NextPage = () => {
   const [content, setContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { status } = useSession();
-  const { mutate } = useSWRConfig();
+  const { mutate } = useGetPostsInfinite();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,11 +38,11 @@ const CreatePage: NextPage = () => {
   return (
     <Layout>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          savePost({ content }).then(() => {
-            mutate(API_POSTS);
-          });
+          setIsLoading(true);
+          await savePost({ content });
+          mutate().finally(() => setIsLoading(false));
           router.back();
         }}
       >
@@ -57,6 +58,7 @@ const CreatePage: NextPage = () => {
           {content.length}/{maxLength}
           <PrimaryButton
             disabled={content.length === 0 || content.length > maxLength}
+            isLoading={isLoading}
             type="submit"
           >
             Create
