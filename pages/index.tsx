@@ -8,7 +8,7 @@ import { SWRConfig } from "swr";
 import { RefreshIcon } from "@heroicons/react/solid";
 import getPostsWithUsersAndLikes from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
-import { API_POSTS, PAGE_SIZE } from "../lib/constants";
+import { API_POSTS, PAGE_SIZE, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useSession } from "next-auth/react";
 import { useGetPostsInfinite } from "../lib/hooks";
 
@@ -60,14 +60,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
         <meta name="description" content="Twitter clone for fun" />
         <meta property="og:description" content="Twitter clone for fun" />
         <meta name="twitter:description" content="Twitter clone for fun" />
-        <meta
-          property="og:image"
-          content="https://img.icons8.com/ios/344/bird--v1.png"
-        />
-        <meta
-          name="twitter:image"
-          content="https://img.icons8.com/ios/344/bird--v1.png"
-        ></meta>
+        <meta property="og:image" content={PREVIEW_IMAGE_URL} />
+        <meta name="twitter:image" content={PREVIEW_IMAGE_URL}></meta>
       </Head>
       <SWRConfig value={{ fallback }}>
         <Layout>
