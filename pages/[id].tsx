@@ -6,7 +6,7 @@ import { useState } from "react";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
-import { API_POSTS } from "../lib/constants";
+import { API_POSTS, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
 import prisma from "../lib/prisma";
 import { PostWithUserAndLikes } from "../types";
@@ -60,14 +60,8 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
         <meta name="description" content={post.content} />
         <meta property="og:description" content={post.content} />
         <meta name="twitter:description" content={post.content} />
-        <meta
-          property="og:image"
-          content="https://img.icons8.com/ios/344/bird--v1.png"
-        />
-        <meta
-          name="twitter:image"
-          content="https://img.icons8.com/ios/344/bird--v1.png"
-        ></meta>
+        <meta property="og:image" content={PREVIEW_IMAGE_URL} />
+        <meta name="twitter:image" content={PREVIEW_IMAGE_URL}></meta>
       </Head>
       <Layout>
         <PostComponent post={post} />
