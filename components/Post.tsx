@@ -1,4 +1,4 @@
-import { RefreshIcon, SparklesIcon } from "@heroicons/react/solid";
+import { RefreshIcon, ShareIcon, SparklesIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { API_POSTS } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
-import { PostWithUserAndLikes } from "../types";
+import { PostWithUserAndLikes, Timeout } from "../types";
 
 type PostProps = { post: PostWithUserAndLikes };
 
@@ -28,6 +28,24 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const { mutate } = useGetPostsInfinite();
+  const [isCopied, setIsCopied] = useState(false);
+  const [copyTimeout, setCopyTimeout] = useState<null | Timeout>(null);
+
+  const sharePost = async () => {
+    if (copyTimeout) {
+      clearTimeout(copyTimeout);
+    }
+
+    await navigator.clipboard.writeText(`${window.location.origin}/${id}`);
+    setIsCopied(true);
+
+    const timeoutId: Timeout = setTimeout(() => {
+      setIsCopied(false);
+      setCopyTimeout(null);
+    }, 5000);
+
+    setCopyTimeout(timeoutId);
+  };
 
   return (
     <>
@@ -62,31 +80,37 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
           </div>
         </div>
       </Link>
-      <button
-        className="flex space-x-2 items-center transition group"
-        onClick={async () => {
-          setIsLoading(true);
-          await toggleLike(id);
-          mutate().finally(() => setIsLoading(false));
-        }}
-      >
-        <>
-          {isLoading ? (
-            <RefreshIcon className="h-4 aspect-square animate-reverse-spin" />
-          ) : (
-            <SparklesIcon
-              className={clsx(
-                "h-4 aspect-square",
-                "group-hover:text-yellow-200",
-                {
-                  "text-yellow-500": currentUserLikesThisPost,
-                }
-              )}
-            />
-          )}
-          {likes.length}
-        </>
-      </button>
+      <div className="flex space-x-5">
+        <button
+          className="flex items-center transition group"
+          onClick={async () => {
+            setIsLoading(true);
+            await toggleLike(id);
+            mutate().finally(() => setIsLoading(false));
+          }}
+        >
+          <>
+            {isLoading ? (
+              <RefreshIcon className="h-5 aspect-square animate-reverse-spin mr-1" />
+            ) : (
+              <SparklesIcon
+                className={clsx(
+                  "h-4 aspect-square mr-1",
+                  "group-hover:text-yellow-200",
+                  {
+                    "text-yellow-500": currentUserLikesThisPost,
+                  }
+                )}
+              />
+            )}
+            {likes.length}
+          </>
+        </button>
+        <button className="flex items-center" onClick={sharePost}>
+          <ShareIcon className="h-5 aspect-square hover:text-blue-400 transition mr-2" />
+          <>{isCopied ? "Link copied!" : null}</>
+        </button>
+      </div>
     </>
   );
 };
