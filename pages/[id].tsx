@@ -1,11 +1,12 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useSWRConfig } from "swr";
+import { useState } from "react";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
 import { API_POSTS } from "../lib/constants";
+import { useGetPostsInfinite } from "../lib/hooks";
 import prisma from "../lib/prisma";
 import { PostWithUserAndLikes } from "../types";
 
@@ -46,7 +47,8 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
 
 const PostPage: NextPage<PostPageProps> = ({ post }) => {
   const { data: session } = useSession();
-  const { mutate } = useSWRConfig();
+  const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useGetPostsInfinite();
   const router = useRouter();
   return (
     <Layout>
@@ -54,10 +56,13 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
       {session?.user.id === post.authorId ? (
         <div className="flex justify-end">
           <DeleteButton
-            onClick={() => {
-              deletePost(post.id).then(() => mutate(API_POSTS));
+            onClick={async () => {
+              setIsLoading(true);
+              await deletePost(post.id);
+              mutate().finally(() => setIsLoading(false));
               router.back();
             }}
+            isLoading={isLoading}
           >
             Delete
           </DeleteButton>

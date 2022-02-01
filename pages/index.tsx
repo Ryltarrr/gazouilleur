@@ -5,12 +5,12 @@ import Link from "next/link";
 import PostComponent from "../components/Post";
 import { PostWithUserAndLikes } from "../types";
 import { SWRConfig } from "swr";
-import useSWRInfinite from "swr/infinite";
 import { RefreshIcon } from "@heroicons/react/solid";
 import getPostsWithUsersAndLikes from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
 import { API_POSTS, PAGE_SIZE } from "../lib/constants";
 import { useSession } from "next-auth/react";
+import { useGetPostsInfinite } from "../lib/hooks";
 
 type Props = {
   fallback: {
@@ -26,7 +26,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     cursor = cursor[0];
   }
 
-  const postsAndUsers: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(cursor);
+  const postsAndUsers: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(
+    cursor
+  );
 
   return {
     props: {
@@ -37,33 +39,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   };
 };
 
-const getKey = (
-  pageIndex: number,
-  previousPageData: PostWithUserAndLikes[]
-) => {
-  // reached the end
-  if (previousPageData && previousPageData.length === 0) {
-    return null;
-  }
-
-  // first page, we don't have `previousPageData`
-  if (pageIndex === 0) return API_POSTS;
-
-  // add the cursor to the API endpoint
-  const cursor = previousPageData[previousPageData.length - 1].id;
-  return `${API_POSTS}?cursor=${cursor}`;
-};
-
 const Home: NextPage<Props> = ({ fallback }) => {
-  const {
-    data: postsPages,
-    error,
-    size,
-    setSize,
-  } = useSWRInfinite<PostWithUserAndLikes[]>(getKey, (key) =>
-    fetch(key).then((res) => res.json())
-  );
-
+  const { data: postsPages, error, size, setSize } = useGetPostsInfinite();
   const { status: sessionStatus } = useSession();
 
   const isLoadingInitialData = !postsPages && !error;
@@ -98,7 +75,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
           {isLoadingInitialData && (
             <div className="absolute top-10 inset-x-0">
               <div className="flex justify-center transition-all">
-                <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
+                <RefreshIcon className="h-7 aspect-square animate-reverse-spin" />
               </div>
             </div>
           )}
@@ -116,7 +93,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
               </Button>
 
               {isLoadingMore && (
-                <RefreshIcon className="h-7 w-7 animate-reverse-spin" />
+                <RefreshIcon className="h-7 aspect-square animate-reverse-spin" />
               )}
             </div>
           )}

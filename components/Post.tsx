@@ -1,9 +1,11 @@
-import { SparklesIcon } from "@heroicons/react/solid";
+import { RefreshIcon, SparklesIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { API_POSTS } from "../lib/constants";
+import { useGetPostsInfinite } from "../lib/hooks";
 import { PostWithUserAndLikes } from "../types";
 
 type PostProps = { post: PostWithUserAndLikes };
@@ -24,6 +26,9 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
   const currentUserLikesThisPost = likes.find(
     (l) => l.userId === session?.user.id
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useGetPostsInfinite();
+
   return (
     <>
       <Link href={`/${id}`} passHref>
@@ -48,7 +53,7 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
             )}
           </div>
           <div className="flex-1">
-            <Link href={`/profile/${author.id}`}>
+            <Link passHref href={`/profile/${author.id}`}>
               <span className="no-underline hover:underline transition-all">
                 {author.name && author.name}
               </span>
@@ -59,14 +64,28 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
       </Link>
       <button
         className="flex space-x-2 items-center transition group"
-        onClick={() => toggleLike(id)}
+        onClick={async () => {
+          setIsLoading(true);
+          await toggleLike(id);
+          mutate().finally(() => setIsLoading(false));
+        }}
       >
-        <SparklesIcon
-          className={clsx("h-4 aspect-square", "group-hover:text-yellow-200", {
-            "text-yellow-500": currentUserLikesThisPost,
-          })}
-        />
-        {likes.length}
+        <>
+          {isLoading ? (
+            <RefreshIcon className="h-4 aspect-square animate-reverse-spin" />
+          ) : (
+            <SparklesIcon
+              className={clsx(
+                "h-4 aspect-square",
+                "group-hover:text-yellow-200",
+                {
+                  "text-yellow-500": currentUserLikesThisPost,
+                }
+              )}
+            />
+          )}
+          {likes.length}
+        </>
       </button>
     </>
   );
