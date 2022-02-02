@@ -12,7 +12,7 @@ import prisma from "../lib/prisma";
 import { PostWithUserAndLikes } from "../types";
 
 type PostPageProps = {
-  post: PostWithUserAndLikes;
+  post: PostWithUserAndLikes & { repliedBy: PostWithUserAndLikes[] };
 };
 
 async function deletePost(id: string) {
@@ -32,7 +32,11 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   const postId = context.params?.id as string;
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    include: { author: true, likes: true },
+    include: {
+      author: true,
+      likes: true,
+      repliedBy: { include: { author: true, likes: true } },
+    },
   });
   if (post) {
     return {
@@ -65,6 +69,9 @@ const PostPage: NextPage<PostPageProps> = ({ post }) => {
       </Head>
       <Layout>
         <PostComponent post={post} />
+        {post.repliedBy.map((reply) => (
+          <PostComponent key={reply.id} post={reply} />
+        ))}
         {session?.user.id === post.authorId ? (
           <div className="flex justify-end">
             <DeleteButton

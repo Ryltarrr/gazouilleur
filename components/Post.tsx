@@ -7,6 +7,7 @@ import { useState } from "react";
 import { API_POSTS } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
 import { PostWithUserAndLikes, Timeout } from "../types";
+import { Post } from "@prisma/client";
 
 type PostProps = { post: PostWithUserAndLikes };
 
@@ -21,7 +22,22 @@ async function toggleLike(postId: string) {
   return await response.json();
 }
 
-const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
+async function addToPost(postId: string, reply: Partial<Post>) {
+  const response = await fetch(`${API_POSTS}/reply/${postId}`, {
+    method: "POST",
+    body: JSON.stringify(reply),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  return await response.json();
+}
+
+const PostComponent = ({
+  post: { content, id, author, likes, postRepliedId },
+}: PostProps) => {
   const { data: session } = useSession();
   const currentUserLikesThisPost = likes.find(
     (l) => l.userId === session?.user.id
@@ -49,12 +65,26 @@ const PostComponent = ({ post: { content, id, author, likes } }: PostProps) => {
 
   return (
     <>
+      <pre>
+        <button
+          onClick={() => {
+            const answer = window.prompt("Your reply?") || "reply";
+            addToPost(id, {
+              content: answer,
+            });
+          }}
+        >
+          add reply
+        </button>
+      </pre>
       <Link href={`/${id}`} passHref>
         <div
           key={id}
           className={clsx(
             "flex my-3 px-3 py-4 rounded-md space-x-2",
-            "bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300",
+            postRepliedId
+              ? "bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 "
+              : "bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 hover:bg-blue-300",
             "cursor-pointer"
           )}
         >
