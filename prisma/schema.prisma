@@ -11,13 +11,16 @@ datasource db {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId  String
-  likes     Like[]
+  id            String   @id @default(cuid())
+  content       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId      String
+  likes         Like[]
+  repliesTo     Post?    @relation("Replies", references: [id], fields: [postRepliedId])
+  postRepliedId String?
+  repliedBy     Post[]   @relation("Replies")
 }
 
 model Like {

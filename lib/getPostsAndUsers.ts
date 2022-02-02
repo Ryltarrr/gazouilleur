@@ -11,6 +11,7 @@ const getPostsWithUsersAndLikes = (cursor: string | undefined) => {
         }
       : undefined,
     include: { author: true, likes: true },
+    where: { postRepliedId: null },
     orderBy: { createdAt: "desc" },
   });
 };
