@@ -1,10 +1,14 @@
+import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
-import { PostWithUserAndLikes } from "../types";
+import {
+  PostWithAuthorAndLikes,
+  PostWithAuthorLikesAndReplies,
+} from "../types";
 import { API_POSTS } from "./constants";
 
 const getKey = (
   pageIndex: number,
-  previousPageData: PostWithUserAndLikes[]
+  previousPageData: PostWithAuthorAndLikes[]
 ) => {
   // reached the end
   if (previousPageData && previousPageData.length === 0) {
@@ -19,8 +23,12 @@ const getKey = (
   return `${API_POSTS}?cursor=${cursor}`;
 };
 
+const fetcher = (key: any) => fetch(key).then((res) => res.json());
+
 export const useGetPostsInfinite = () => {
-  return useSWRInfinite<PostWithUserAndLikes[]>(getKey, (key) =>
-    fetch(key).then((res) => res.json())
-  );
+  return useSWRInfinite<PostWithAuthorAndLikes[]>(getKey, fetcher);
+};
+
+export const useGetPost = (id: string) => {
+  return useSWR<PostWithAuthorLikesAndReplies>(`${API_POSTS}/${id}`, fetcher);
 };

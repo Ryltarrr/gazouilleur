@@ -1,14 +1,26 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { PostWithUserAndLikes } from "../types";
+import { useEffect } from "react";
+import { useSWRConfig } from "swr";
+import { PostWithAuthorAndLikes } from "../types";
 import PostActions from "./PostActions";
 
-type PostProps = { post: PostWithUserAndLikes };
+type PostProps = { post: PostWithAuthorAndLikes };
 
 const PostComponent = ({
   post: { content, id, author, likes, postRepliedId: isReply },
 }: PostProps) => {
+  const { mutate } = useSWRConfig();
+
+  useEffect(() => {
+    const cacheId = `/api/post/${id}`;
+    mutate(
+      cacheId,
+      fetch(cacheId).then((res) => res.json())
+    );
+  }, [id, mutate]);
+
   return (
     <>
       <Link href={`/${id}`} passHref>
@@ -50,7 +62,6 @@ const PostComponent = ({
         </div>
       </Link>
       <PostActions id={id} likes={likes} />
-      {!isReply ? <hr className="mt-3 mb-7 dark:border-zinc-700" /> : null}
     </>
   );
 };
