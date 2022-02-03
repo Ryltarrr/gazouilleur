@@ -3,18 +3,18 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import Link from "next/link";
 import PostComponent from "../components/Post";
-import { PostWithUserAndLikes } from "../types";
+import { PostWithAuthorAndLikes } from "../types";
 import { SWRConfig } from "swr";
 import { RefreshIcon } from "@heroicons/react/solid";
-import getPostsWithUsersAndLikes from "../lib/getPostsAndUsers";
 import Button from "../components/Button";
 import { API_POSTS, PAGE_SIZE, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useSession } from "next-auth/react";
 import { useGetPostsInfinite } from "../lib/hooks";
+import { getPostsWithAuthorsAndLikes } from "../lib/queries";
 
 type Props = {
   fallback: {
-    [API_POSTS]: PostWithUserAndLikes[];
+    [API_POSTS]: PostWithAuthorAndLikes[];
   };
 };
 
@@ -26,9 +26,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     cursor = cursor[0];
   }
 
-  const postsAndUsers: PostWithUserAndLikes[] = await getPostsWithUsersAndLikes(
-    cursor
-  );
+  const postsAndUsers: PostWithAuthorAndLikes[] =
+    await getPostsWithAuthorsAndLikes(cursor);
 
   return {
     props: {
