@@ -1,96 +1,30 @@
-import { RefreshIcon, ShareIcon, SparklesIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { API_POSTS } from "../lib/constants";
-import { useGetPostsInfinite } from "../lib/hooks";
-import { PostWithUserAndLikes, Timeout } from "../types";
-import { Post } from "@prisma/client";
+import { PostWithUserAndLikes } from "../types";
+import PostActions from "./PostActions";
 
 type PostProps = { post: PostWithUserAndLikes };
 
-async function toggleLike(postId: string) {
-  const response = await fetch(`${API_POSTS}/like/${postId}`, {
-    method: "POST",
-  });
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-
-  return await response.json();
-}
-
-async function addToPost(postId: string, reply: Partial<Post>) {
-  const response = await fetch(`${API_POSTS}/reply/${postId}`, {
-    method: "POST",
-    body: JSON.stringify(reply),
-  });
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-
-  return await response.json();
-}
-
 const PostComponent = ({
-  post: { content, id, author, likes, postRepliedId },
+  post: { content, id, author, likes, postRepliedId: isReply },
 }: PostProps) => {
-  const { data: session } = useSession();
-  const currentUserLikesThisPost = likes.find(
-    (l) => l.userId === session?.user.id
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const { mutate } = useGetPostsInfinite();
-  const [isCopied, setIsCopied] = useState(false);
-  const [copyTimeout, setCopyTimeout] = useState<null | Timeout>(null);
-
-  const sharePost = async () => {
-    if (copyTimeout) {
-      clearTimeout(copyTimeout);
-    }
-
-    await navigator.clipboard.writeText(`${window.location.origin}/${id}`);
-    setIsCopied(true);
-
-    const timeoutId: Timeout = setTimeout(() => {
-      setIsCopied(false);
-      setCopyTimeout(null);
-    }, 5000);
-
-    setCopyTimeout(timeoutId);
-  };
-
   return (
     <>
-      <pre>
-        <button
-          onClick={() => {
-            const answer = window.prompt("Your reply?") || "reply";
-            addToPost(id, {
-              content: answer,
-            });
-          }}
-        >
-          add reply
-        </button>
-      </pre>
       <Link href={`/${id}`} passHref>
         <div
           key={id}
           className={clsx(
-            "flex my-3 px-3 py-4 rounded-md space-x-2",
-            postRepliedId
-              ? "bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 "
-              : "bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 hover:bg-blue-300",
+            "flex my-3 px-3 py-4 rounded-md space-x-2 border",
+            isReply
+              ? "dark:hover:bg-zinc-700 hover:bg-zinc-300 dark:border-zinc-700"
+              : "bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 border-none",
             "cursor-pointer"
           )}
         >
           <div>
             {author.image && (
-              <div className="relative w-10 aspect-square">
+              <div className={clsx("relative w-10 aspect-square")}>
                 <Image
                   layout="fill"
                   className="rounded-full"
@@ -102,45 +36,21 @@ const PostComponent = ({
           </div>
           <div className="flex-1">
             <Link passHref href={`/profile/${author.id}`}>
-              <span className="no-underline hover:underline transition-all">
+              <span
+                className={clsx(
+                  "no-underline hover:underline transition-all",
+                  "text-sm"
+                )}
+              >
                 {author.name && author.name}
               </span>
             </Link>
-            <div className="text-sm opacity-70">{content}</div>
+            <div className={clsx("opacity-70", "text-sm")}>{content}</div>
           </div>
         </div>
       </Link>
-      <div className="flex space-x-5">
-        <button
-          className="flex items-center transition group"
-          onClick={async () => {
-            setIsLoading(true);
-            await toggleLike(id);
-            mutate().finally(() => setIsLoading(false));
-          }}
-        >
-          <>
-            {isLoading ? (
-              <RefreshIcon className="h-5 aspect-square animate-reverse-spin mr-1" />
-            ) : (
-              <SparklesIcon
-                className={clsx(
-                  "h-4 aspect-square mr-1",
-                  "group-hover:text-yellow-200",
-                  {
-                    "text-yellow-500": currentUserLikesThisPost,
-                  }
-                )}
-              />
-            )}
-            {likes.length}
-          </>
-        </button>
-        <button className="flex items-center" onClick={sharePost}>
-          <ShareIcon className="h-5 aspect-square hover:text-blue-400 transition mr-2" />
-          <>{isCopied ? "Link copied!" : null}</>
-        </button>
-      </div>
+      <PostActions id={id} likes={likes} />
+      {!isReply ? <hr className="mt-3 mb-7 dark:border-zinc-700" /> : null}
     </>
   );
 };
