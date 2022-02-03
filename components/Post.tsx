@@ -1,8 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useSWRConfig } from "swr";
 import { PostWithAuthorAndLikes } from "../types";
 import PostActions from "./PostActions";
 
@@ -11,16 +9,6 @@ type PostProps = { post: PostWithAuthorAndLikes };
 const PostComponent = ({
   post: { content, id, author, likes, postRepliedId: isReply },
 }: PostProps) => {
-  const { mutate } = useSWRConfig();
-
-  useEffect(() => {
-    const cacheId = `/api/post/${id}`;
-    mutate(
-      cacheId,
-      fetch(cacheId).then((res) => res.json())
-    );
-  }, [id, mutate]);
-
   return (
     <>
       <Link href={`/${id}`} passHref>

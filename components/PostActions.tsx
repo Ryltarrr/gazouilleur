@@ -8,19 +8,18 @@ import { Like } from "@prisma/client";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { useSWRConfig } from "swr";
-import { useGetPostsInfinite } from "../lib/hooks";
+import { useGetPost, useGetPostsInfinite } from "../lib/hooks";
 import { toggleLike, addToPost } from "../lib/requests";
 import { Timeout } from "../types";
 
-const PostActions = ({ likes, id }: { likes: Like[]; id: string }) => {
+const PostActions = ({ id }: { likes: Like[]; id: string }) => {
+  const { data: post, mutate } = useGetPost(id);
   const { data: session } = useSession();
-  const currentUserLikesThisPost = likes.find(
+  const currentUserLikesThisPost = post?.likes.find(
     (l) => l.userId === session?.user.id
   );
   const [isLoading, setIsLoading] = useState(false);
   const { mutate: mutateAllPosts } = useGetPostsInfinite();
-  const { mutate } = useSWRConfig();
   const [isCopied, setIsCopied] = useState(false);
   const [copyTimeout, setCopyTimeout] = useState<null | Timeout>(null);
 
@@ -53,8 +52,7 @@ const PostActions = ({ likes, id }: { likes: Like[]; id: string }) => {
   const likePost = async () => {
     setIsLoading(true);
     await toggleLike(id);
-    const cacheId = `/api/post/${id}`;
-    mutate(cacheId);
+    mutate();
     mutateAllPosts().finally(() => setIsLoading(false));
   };
 
@@ -75,7 +73,7 @@ const PostActions = ({ likes, id }: { likes: Like[]; id: string }) => {
               )}
             />
           )}
-          {likes.length}
+          {post?.likes.length}
         </>
       </button>
       <button onClick={replyPrompt}>
