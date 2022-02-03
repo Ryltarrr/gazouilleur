@@ -6,25 +6,15 @@ import { useState } from "react";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
-import { API_POSTS, PREVIEW_IMAGE_URL } from "../lib/constants";
+import { PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
 import prisma from "../lib/prisma";
+import { deletePost } from "../lib/requests";
 import { PostWithUserAndLikes } from "../types";
 
 type PostPageProps = {
   post: PostWithUserAndLikes & { repliedBy: PostWithUserAndLikes[] };
 };
-
-async function deletePost(id: string) {
-  const response = await fetch(`${API_POSTS}/delete/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-
-  return await response.json();
-}
 
 export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   context
