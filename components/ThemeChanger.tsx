@@ -1,6 +1,6 @@
-import { useTheme } from 'next-themes';
-import { MoonIcon, SunIcon } from '@heroicons/react/solid';
-import { useEffect, useState } from 'react';
+import { useTheme } from "next-themes";
+import { MoonIcon, SunIcon } from "@heroicons/react/solid";
+import { useEffect, useState } from "react";
 
 // available themes: 'light', 'dark' and 'system'
 const ThemeChanger = () => {
@@ -13,17 +13,17 @@ const ThemeChanger = () => {
 
   return (
     <div className="flex space-x-2">
-      {theme === 'light' ? (
+      {theme === "light" ? (
         <button
-          className="hover:bg-purple-100 rounded-full p-1 text-purple-500 transition"
-          onClick={() => setTheme('dark')}
+          className="rounded-full p-1 text-purple-500 transition hover:bg-purple-100"
+          onClick={() => setTheme("dark")}
         >
           <MoonIcon className="h-6 w-6" />
         </button>
       ) : (
         <button
-          className="hover:bg-yellow-100 rounded-full p-1 transition text-yellow-500"
-          onClick={() => setTheme('light')}
+          className="rounded-full p-1 text-yellow-500 transition hover:bg-yellow-100"
+          onClick={() => setTheme("light")}
         >
           <SunIcon className="h-6 w-6" />
         </button>

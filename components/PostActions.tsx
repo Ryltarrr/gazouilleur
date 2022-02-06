@@ -15,6 +15,7 @@ import { Timeout } from "../types";
 const PostActions = ({ id }: { likes: Like[]; id: string }) => {
   const { data: post, mutate } = useGetPost(id);
   const { data: session } = useSession();
+  const isUserConnected = !!session?.user.id;
   const currentUserLikesThisPost = post?.likes.find(
     (l) => l.userId === session?.user.id
   );
@@ -56,16 +57,20 @@ const PostActions = ({ id }: { likes: Like[]; id: string }) => {
     mutateAllPosts().finally(() => setIsLoading(false));
   };
 
+  if (!isUserConnected) {
+    return null;
+  }
+
   return (
     <div className="flex space-x-5">
-      <button className="flex items-center transition group" onClick={likePost}>
+      <button className="group flex items-center transition" onClick={likePost}>
         <>
           {isLoading ? (
-            <RefreshIcon className="h-5 aspect-square animate-reverse-spin mr-1" />
+            <RefreshIcon className="mr-1 aspect-square h-5 animate-reverse-spin" />
           ) : (
             <SparklesIcon
               className={clsx(
-                "h-4 aspect-square mr-1",
+                "mr-1 aspect-square h-4",
                 "group-hover:text-yellow-200",
                 {
                   "text-yellow-500": currentUserLikesThisPost,
@@ -77,10 +82,10 @@ const PostActions = ({ id }: { likes: Like[]; id: string }) => {
         </>
       </button>
       <button onClick={replyPrompt}>
-        <ReplyIcon className="h-5 aspect-square hover:text-blue-400 transition mr-1" />
+        <ReplyIcon className="mr-1 aspect-square h-5 transition hover:text-blue-400" />
       </button>
       <button className="flex items-center" onClick={sharePost}>
-        <ShareIcon className="h-5 aspect-square hover:text-blue-400 transition mr-1" />
+        <ShareIcon className="mr-1 aspect-square h-5 transition hover:text-blue-400" />
         <>{isCopied ? "Link copied!" : null}</>
       </button>
     </div>

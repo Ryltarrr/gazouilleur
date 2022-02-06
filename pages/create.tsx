@@ -35,15 +35,15 @@ const CreatePage: NextPage = () => {
   return (
     <Layout>
       <form onSubmit={handleSubmit}>
-        <label className="block mb-1">Content</label>
+        <label className="mb-1 block">Content</label>
         <textarea
-          className="block mb-5 rounded-md w-full border-2 border-orange-500 focus:outline-none"
+          className="mb-5 block w-full rounded-md border-2 border-orange-500 focus:outline-none"
           autoFocus
           value={content}
           onChange={handleChange}
           maxLength={MAX_POST_LENGTH}
         />
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           {content.length}/{MAX_POST_LENGTH}
           <PrimaryButton
             disabled={content.length === 0 || content.length > MAX_POST_LENGTH}

@@ -32,7 +32,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ user }) => {
     <Layout>
       <div className="flex items-center space-x-5">
         {user.image ? (
-          <div className="relative w-16 aspect-square">
+          <div className="relative aspect-square w-16">
             <Image
               layout="fill"
               className="rounded-full"
@@ -41,7 +41,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ user }) => {
             />
           </div>
         ) : null}
-        <div className="font-bold text-lg">{user.name ? user.name : null}</div>
+        <div className="text-lg font-bold">{user.name ? user.name : null}</div>
       </div>
     </Layout>
   );

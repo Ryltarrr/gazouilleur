@@ -73,8 +73,8 @@ const Home: NextPage<Props> = ({ fallback }) => {
             {sessionStatus === "authenticated" ? (
               <Link href="/create">
                 <a
-                  className="transition underline
-        decoration-orange-500 hover:text-orange-500
+                  className="underline decoration-orange-500
+        transition hover:text-orange-500
         dark:decoration-orange-400 dark:hover:text-orange-400"
                 >
                   Create new post
@@ -82,9 +82,9 @@ const Home: NextPage<Props> = ({ fallback }) => {
               </Link>
             ) : null}
             {isLoadingInitialData && (
-              <div className="absolute top-10 inset-x-0">
+              <div className="absolute inset-x-0 top-10">
                 <div className="flex justify-center transition-all">
-                  <RefreshIcon className="h-7 aspect-square animate-reverse-spin" />
+                  <RefreshIcon className="aspect-square h-7 animate-reverse-spin" />
                 </div>
               </div>
             )}
@@ -92,7 +92,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
               posts?.map((p) => <PostComponent key={p.id} post={p} />)
             )}
             {!isLoadingInitialData && (
-              <div className="flex justify-center items-center space-x-2">
+              <div className="flex items-center justify-center space-x-2">
                 <Button
                   className="my-3"
                   disabled={isReachingEnd}

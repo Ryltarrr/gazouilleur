@@ -15,16 +15,16 @@ const PostComponent = ({
         <div
           key={id}
           className={clsx(
-            "flex my-3 px-3 py-4 rounded-md space-x-2 border",
+            "my-3 flex space-x-2 rounded-md border px-3 py-4",
             isReply
-              ? "dark:hover:bg-zinc-700 hover:bg-zinc-300 dark:border-zinc-700"
-              : "bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 border-none",
+              ? "hover:bg-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-700"
+              : "border-none bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700",
             "cursor-pointer"
           )}
         >
           <div>
             {author.image && (
-              <div className={clsx("relative w-10 aspect-square")}>
+              <div className={clsx("relative aspect-square w-10")}>
                 <Image
                   layout="fill"
                   className="rounded-full"
@@ -38,7 +38,7 @@ const PostComponent = ({
             <Link passHref href={`/profile/${author.id}`}>
               <span
                 className={clsx(
-                  "no-underline hover:underline transition-all",
+                  "no-underline transition-all hover:underline",
                   "text-sm"
                 )}
               >
