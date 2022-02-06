@@ -15,6 +15,7 @@ import { Timeout } from "../types";
 const PostActions = ({ id }: { likes: Like[]; id: string }) => {
   const { data: post, mutate } = useGetPost(id);
   const { data: session } = useSession();
+  const isUserConnected = !!session?.user.id;
   const currentUserLikesThisPost = post?.likes.find(
     (l) => l.userId === session?.user.id
   );
@@ -55,6 +56,10 @@ const PostActions = ({ id }: { likes: Like[]; id: string }) => {
     mutate();
     mutateAllPosts().finally(() => setIsLoading(false));
   };
+
+  if (!isUserConnected) {
+    return null;
+  }
 
   return (
     <div className="flex space-x-5">
