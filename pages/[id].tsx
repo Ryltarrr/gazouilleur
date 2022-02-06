@@ -7,6 +7,7 @@ import { SWRConfig } from "swr";
 import { DeleteButton } from "../components/Button";
 import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
+import PostReplies from "../components/PostReplies";
 import { PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPost, useGetPostsInfinite } from "../lib/hooks";
 import { getPost } from "../lib/queries";
@@ -80,9 +81,7 @@ const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
             {!post.postRepliedId ? (
               <hr className="mt-3 mb-7 dark:border-zinc-700" />
             ) : null}
-            {post.repliedBy.map((reply) => (
-              <PostComponent key={reply.id} post={reply} />
-            ))}
+            <PostReplies replies={post.repliedBy} />
           </Layout>
         ) : null}
       </SWRConfig>
