@@ -1,16 +1,15 @@
-import type { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
-import Layout from "../components/Layout";
-import Link from "next/link";
-import PostComponent from "../components/Post";
-import { PostWithAuthorAndLikes } from "../types";
-import { SWRConfig } from "swr";
 import { RefreshIcon } from "@heroicons/react/solid";
-import Button from "../components/Button";
-import { API_POSTS, PAGE_SIZE, PREVIEW_IMAGE_URL } from "../lib/constants";
+import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
+import Head from "next/head";
+import Link from "next/link";
+import { SWRConfig } from "swr";
+import Button from "../components/Button";
+import PostComponent from "../components/Post";
+import { API_POSTS, PAGE_SIZE, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
 import { getPostsWithAuthorsAndLikes } from "../lib/queries";
+import { PostWithAuthorAndLikes } from "../types";
 
 type Props = {
   fallback: {
@@ -54,6 +53,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
   return (
     <>
       <Head>
+        <title>Gazouilleur</title>
         <meta property="og:title" content="Gazouilleur" />
         <meta name="twitter:title" content="Gazouilleur" />
         <meta name="description" content="Twitter clone for fun" />
@@ -63,12 +63,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
         <meta name="twitter:image" content={PREVIEW_IMAGE_URL}></meta>
       </Head>
       <SWRConfig value={{ fallback }}>
-        <Layout>
-          <Head>
-            <title>Gazouilleur</title>
-            <meta name="description" content="Twitter Clone" />
-            <link rel="icon" href="/favicon.ico" />
-          </Head>
+        <>
           <main>
             {sessionStatus === "authenticated" ? (
               <Link href="/create">
@@ -104,7 +99,7 @@ const Home: NextPage<Props> = ({ fallback }) => {
               </div>
             )}
           </main>
-        </Layout>
+        </>
       </SWRConfig>
     </>
   );
