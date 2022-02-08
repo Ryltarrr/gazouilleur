@@ -3,7 +3,6 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { PrimaryButton } from "../components/Button";
-import Layout from "../components/Layout";
 import { MAX_POST_LENGTH } from "../lib/constants";
 import { useGetPostsInfinite } from "../lib/hooks";
 import { savePost } from "../lib/requests";
@@ -33,28 +32,26 @@ const CreatePage: NextPage = () => {
     setContent(e.target.value);
 
   return (
-    <Layout>
-      <form onSubmit={handleSubmit}>
-        <label className="mb-1 block">Content</label>
-        <textarea
-          className="mb-5 block w-full rounded-md border-2 border-orange-500 focus:outline-none"
-          autoFocus
-          value={content}
-          onChange={handleChange}
-          maxLength={MAX_POST_LENGTH}
-        />
-        <div className="flex items-center justify-between">
-          {content.length}/{MAX_POST_LENGTH}
-          <PrimaryButton
-            disabled={content.length === 0 || content.length > MAX_POST_LENGTH}
-            isLoading={isLoading}
-            type="submit"
-          >
-            Create
-          </PrimaryButton>
-        </div>
-      </form>
-    </Layout>
+    <form onSubmit={handleSubmit}>
+      <label className="mb-1 block">Content</label>
+      <textarea
+        className="mb-5 block w-full rounded-md border-2 border-orange-500 focus:outline-none"
+        autoFocus
+        value={content}
+        onChange={handleChange}
+        maxLength={MAX_POST_LENGTH}
+      />
+      <div className="flex items-center justify-between">
+        {content.length}/{MAX_POST_LENGTH}
+        <PrimaryButton
+          disabled={content.length === 0 || content.length > MAX_POST_LENGTH}
+          isLoading={isLoading}
+          type="submit"
+        >
+          Create
+        </PrimaryButton>
+      </div>
+    </form>
   );
 };
 

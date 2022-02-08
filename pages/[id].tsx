@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { SWRConfig } from "swr";
 import { DeleteButton } from "../components/Button";
-import Layout from "../components/Layout";
 import PostComponent from "../components/Post";
 import PostReplies from "../components/PostReplies";
 import { PREVIEW_IMAGE_URL } from "../lib/constants";
@@ -61,7 +60,7 @@ const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
       </Head>
       <SWRConfig value={{ fallback }}>
         {post ? (
-          <Layout>
+          <>
             <PostComponent post={post} />
             {session?.user.id === post.authorId ? (
               <div className="flex justify-end">
@@ -82,7 +81,7 @@ const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
               <hr className="mt-3 mb-7 dark:border-zinc-700" />
             ) : null}
             <PostReplies replies={post.repliedBy} />
-          </Layout>
+          </>
         ) : null}
       </SWRConfig>
     </>
