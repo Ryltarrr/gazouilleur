@@ -1,13 +1,17 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { PostWithAuthorAndLikes } from "../types";
+import { PostWithAuthorLikesAndReplies } from "../types";
 import PostActions from "./PostActions";
 
-type PostProps = { post: PostWithAuthorAndLikes };
+type PostProps = {
+  post: PostWithAuthorLikesAndReplies;
+  initialData: PostWithAuthorLikesAndReplies;
+};
 
 const PostComponent = ({
-  post: { content, id, author, likes, postRepliedId: isReply },
+  post: { content, id, author, postRepliedId: isReply },
+  initialData,
 }: PostProps) => {
   return (
     <>
@@ -49,7 +53,7 @@ const PostComponent = ({
           </div>
         </div>
       </Link>
-      <PostActions id={id} likes={likes} />
+      <PostActions id={id} initialData={initialData} />
     </>
   );
 };

@@ -4,16 +4,21 @@ import {
   ReplyIcon,
   ShareIcon,
 } from "@heroicons/react/solid";
-import { Like } from "@prisma/client";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { useGetPost, useGetPostsInfinite } from "../lib/hooks";
+import { useGetPostQuery, useGetPostsInfinite } from "../lib/hooks";
 import { toggleLike, addToPost } from "../lib/requests";
-import { Timeout } from "../types";
+import { PostWithAuthorLikesAndReplies, Timeout } from "../types";
 
-const PostActions = ({ id }: { likes: Like[]; id: string }) => {
-  const { data: post, mutate } = useGetPost(id);
+const PostActions = ({
+  id,
+  initialData,
+}: {
+  id: string;
+  initialData: PostWithAuthorLikesAndReplies;
+}) => {
+  const { data: post, refetch } = useGetPostQuery(id, initialData);
   const { data: session } = useSession();
   const isUserConnected = !!session?.user.id;
   const currentUserLikesThisPost = post?.likes.find(
@@ -21,6 +26,7 @@ const PostActions = ({ id }: { likes: Like[]; id: string }) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const { mutate: mutateAllPosts } = useGetPostsInfinite();
+  // TODO: export this into a useCopyText
   const [isCopied, setIsCopied] = useState(false);
   const [copyTimeout, setCopyTimeout] = useState<null | Timeout>(null);
 
@@ -53,7 +59,7 @@ const PostActions = ({ id }: { likes: Like[]; id: string }) => {
   const likePost = async () => {
     setIsLoading(true);
     await toggleLike(id);
-    mutate();
+    refetch();
     mutateAllPosts().finally(() => setIsLoading(false));
   };
 

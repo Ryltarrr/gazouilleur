@@ -3,20 +3,17 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { SWRConfig } from "swr";
 import { DeleteButton } from "../components/Button";
 import PostComponent from "../components/Post";
 import PostReplies from "../components/PostReplies";
 import { PREVIEW_IMAGE_URL } from "../lib/constants";
-import { useGetPost, useGetPostsInfinite } from "../lib/hooks";
+import { useGetPostQuery, useGetPostsInfinite } from "../lib/hooks";
 import { getPost } from "../lib/queries";
 import { deletePost } from "../lib/requests";
 import { PostWithAuthorAndLikes } from "../types";
 
 type PostPageProps = {
-  fallback: {
-    post: PostWithAuthorAndLikes & { repliedBy: PostWithAuthorAndLikes[] };
-  };
+  post: PostWithAuthorAndLikes & { repliedBy: PostWithAuthorAndLikes[] };
 };
 
 export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
@@ -27,9 +24,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   if (post) {
     return {
       props: {
-        fallback: {
-          post,
-        },
+        post,
       },
     };
   }
@@ -38,11 +33,11 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
   };
 };
 
-const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
+const PostPage: NextPage<PostPageProps> = (props) => {
   const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
-  const { data: post } = useGetPost(id as string);
+  const { data: post } = useGetPostQuery(id as string, props.post);
   const [isLoading, setIsLoading] = useState(false);
   const { mutate: mutateAllPosts } = useGetPostsInfinite();
 
@@ -58,10 +53,10 @@ const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
         <meta property="og:image" content={PREVIEW_IMAGE_URL} />
         <meta name="twitter:image" content={PREVIEW_IMAGE_URL} />
       </Head>
-      <SWRConfig value={{ fallback }}>
+      <>
         {post ? (
           <>
-            <PostComponent post={post} />
+            <PostComponent post={post} initialData={props.post} />
             {session?.user.id === post.authorId ? (
               <div className="flex justify-end">
                 <DeleteButton
@@ -83,7 +78,7 @@ const PostPage: NextPage<PostPageProps> = ({ fallback }) => {
             <PostReplies replies={post.repliedBy} />
           </>
         ) : null}
-      </SWRConfig>
+      </>
     </>
   );
 };

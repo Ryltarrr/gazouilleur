@@ -1,3 +1,4 @@
+import { useQuery } from "react-query";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 import {
@@ -31,4 +32,18 @@ export const useGetPostsInfinite = () => {
 
 export const useGetPost = (id: string) => {
   return useSWR<PostWithAuthorLikesAndReplies>(`${API_POSTS}/${id}`, fetcher);
+};
+
+export const useGetPostQuery = (
+  id: string,
+  initialData: PostWithAuthorLikesAndReplies
+) => {
+  return useQuery<PostWithAuthorLikesAndReplies>(
+    ["post", id],
+    async () => {
+      const res = await fetch(`${API_POSTS}/${id}`);
+      return res.json();
+    },
+    { initialData }
+  );
 };
