@@ -16,7 +16,9 @@ const PostActions = ({ id, likes }: { id: string; likes: Like[] }) => {
   const queryClient = useQueryClient();
   const likeMutation = useMutation((postId: string) => toggleLike(postId), {
     onSuccess() {
+      // TODO: change the invalidation depending on the page
       queryClient.invalidateQueries(["post", id]);
+      queryClient.invalidateQueries(["postsInfinite"]);
     },
   });
   const replyMutation = useMutation(
