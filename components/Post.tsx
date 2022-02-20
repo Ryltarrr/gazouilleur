@@ -54,7 +54,7 @@ const PostComponent = ({
           </div>
         </div>
       </Link>
-      <PostActions id={id} likes={likes} />
+      <PostActions id={id} likes={likes} postRepliedId={isReply} />
     </>
   );
 };

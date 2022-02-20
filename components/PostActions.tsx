@@ -12,12 +12,22 @@ import { useMutation, useQueryClient } from "react-query";
 import { toggleLike, addToPost } from "../lib/requests";
 import { Timeout } from "../types";
 
-const PostActions = ({ id, likes }: { id: string; likes: Like[] }) => {
+const PostActions = ({
+  id,
+  likes,
+  postRepliedId,
+}: {
+  id: string;
+  likes: Like[];
+  postRepliedId: string;
+}) => {
   const queryClient = useQueryClient();
   const likeMutation = useMutation((postId: string) => toggleLike(postId), {
     onSuccess() {
-      // TODO: change the invalidation depending on the page
+      // TODO: change the invalidation depending on the page/context
+      // try to use invalidateQueries only once
       queryClient.invalidateQueries(["post", id]);
+      queryClient.invalidateQueries(["post", postRepliedId]);
       queryClient.invalidateQueries(["postsInfinite"]);
     },
   });
