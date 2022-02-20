@@ -1,34 +1,52 @@
-import useSWR from "swr";
-import useSWRInfinite from "swr/infinite";
+import { useInfiniteQuery, useQuery } from "react-query";
 import {
   PostWithAuthorAndLikes,
   PostWithAuthorLikesAndReplies,
 } from "../types";
 import { API_POSTS } from "./constants";
 
-const getKey = (
-  pageIndex: number,
-  previousPageData: PostWithAuthorAndLikes[]
+export const useGetPostQuery = (
+  id: string,
+  initialData?: PostWithAuthorLikesAndReplies
 ) => {
-  // reached the end
-  if (previousPageData && previousPageData.length === 0) {
-    return null;
+  return useQuery<PostWithAuthorLikesAndReplies>(
+    ["post", id],
+    async () => {
+      const res = await fetch(`${API_POSTS}/${id}`);
+      return res.json();
+    },
+    { initialData }
+  );
+};
+
+const fetchPosts = async ({ pageParam = 0 }) => {
+  let cursor = undefined;
+  if (pageParam !== 0) {
+    cursor = pageParam;
   }
-
-  // first page, we don't have `previousPageData`
-  if (pageIndex === 0) return API_POSTS;
-
-  // add the cursor to the API endpoint
-  const cursor = previousPageData[previousPageData.length - 1].id;
-  return `${API_POSTS}?cursor=${cursor}`;
+  if (!cursor) {
+    const res = await fetch(`${API_POSTS}`);
+    return res.json();
+  } else {
+    const res = await fetch(`${API_POSTS}?cursor=${cursor}`);
+    return res.json();
+  }
 };
 
-const fetcher = (key: any) => fetch(key).then((res) => res.json());
-
-export const useGetPostsInfinite = () => {
-  return useSWRInfinite<PostWithAuthorAndLikes[]>(getKey, fetcher);
-};
-
-export const useGetPost = (id: string) => {
-  return useSWR<PostWithAuthorLikesAndReplies>(`${API_POSTS}/${id}`, fetcher);
+export const useGetPostsInfiniteQuery = (
+  initialData?: PostWithAuthorAndLikes[]
+) => {
+  return useInfiniteQuery<PostWithAuthorAndLikes[]>(
+    "postsInfinite",
+    fetchPosts,
+    {
+      initialData: { pageParams: [], pages: [initialData || []] },
+      getNextPageParam: (lastPage) => {
+        if (lastPage && lastPage.length === 0) {
+          return undefined;
+        }
+        return lastPage[lastPage.length - 1].id;
+      },
+    }
+  );
 };

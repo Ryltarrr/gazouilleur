@@ -1,13 +1,18 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { PostWithAuthorAndLikes } from "../types";
+import {
+  PostWithAuthorAndLikes,
+  PostWithAuthorLikesAndReplies,
+} from "../types";
 import PostActions from "./PostActions";
 
-type PostProps = { post: PostWithAuthorAndLikes };
+type PostProps = {
+  post: PostWithAuthorAndLikes | PostWithAuthorLikesAndReplies;
+};
 
 const PostComponent = ({
-  post: { content, id, author, likes, postRepliedId: isReply },
+  post: { content, id, likes, author, postRepliedId: isReply },
 }: PostProps) => {
   return (
     <>
