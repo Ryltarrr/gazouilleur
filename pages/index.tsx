@@ -3,18 +3,15 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { SWRConfig } from "swr";
 import Button from "../components/Button";
 import PostComponent from "../components/Post";
-import { API_POSTS, PAGE_SIZE, PREVIEW_IMAGE_URL } from "../lib/constants";
-import { useGetPostsInfinite } from "../lib/hooks";
+import { API_POSTS, PREVIEW_IMAGE_URL } from "../lib/constants";
+import { useGetPostsInfiniteQuery } from "../lib/hooks";
 import { getPostsWithAuthorsAndLikes } from "../lib/queries";
 import { PostWithAuthorAndLikes } from "../types";
 
 type Props = {
-  fallback: {
-    [API_POSTS]: PostWithAuthorAndLikes[];
-  };
+  [API_POSTS]: PostWithAuthorAndLikes[];
 };
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
@@ -30,25 +27,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 
   return {
     props: {
-      fallback: {
-        [API_POSTS]: postsAndUsers,
-      },
+      [API_POSTS]: postsAndUsers,
     },
   };
 };
 
-const Home: NextPage<Props> = ({ fallback }) => {
-  const { data: postsPages, error, size, setSize } = useGetPostsInfinite();
+const Home: NextPage<Props> = (props) => {
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useGetPostsInfiniteQuery(props[API_POSTS]);
   const { status: sessionStatus } = useSession();
-
-  const isLoadingInitialData = !postsPages && !error;
-  const isLoadingMore =
-    isLoadingInitialData ||
-    (size > 0 && postsPages && typeof postsPages[size - 1] === "undefined");
-  const isEmpty = postsPages?.[0]?.length === 0;
-  const isReachingEnd =
-    isEmpty ||
-    (postsPages && postsPages[postsPages.length - 1]?.length < PAGE_SIZE);
 
   return (
     <>
@@ -62,45 +49,43 @@ const Home: NextPage<Props> = ({ fallback }) => {
         <meta property="og:image" content={PREVIEW_IMAGE_URL} />
         <meta name="twitter:image" content={PREVIEW_IMAGE_URL}></meta>
       </Head>
-      <SWRConfig value={{ fallback }}>
-        <>
-          <main>
-            {sessionStatus === "authenticated" ? (
-              <Link href="/create">
-                <a
-                  className="underline decoration-orange-500
+      <>
+        <main>
+          {sessionStatus === "authenticated" ? (
+            <Link href="/create">
+              <a
+                className="underline decoration-orange-500
         transition hover:text-orange-500
         dark:decoration-orange-400 dark:hover:text-orange-400"
-                >
-                  Create new post
-                </a>
-              </Link>
-            ) : null}
-            {isLoadingInitialData && (
-              <div className="absolute inset-x-0 top-10">
-                <div className="flex justify-center transition-all">
-                  <RefreshIcon className="aspect-square h-7 animate-reverse-spin" />
-                </div>
+              >
+                Create new post
+              </a>
+            </Link>
+          ) : null}
+          {isLoading && (
+            <div className="absolute inset-x-0 top-10">
+              <div className="flex justify-center transition-all">
+                <RefreshIcon className="aspect-square h-7 animate-reverse-spin" />
               </div>
-            )}
-            {postsPages?.map((posts) =>
-              posts?.map((p) => <PostComponent key={p.id} post={p} />)
-            )}
-            {!isLoadingInitialData && (
-              <div className="flex items-center justify-center space-x-2">
-                <Button
-                  className="my-3"
-                  disabled={isReachingEnd}
-                  onClick={() => setSize(size + 1)}
-                  isLoading={isLoadingMore}
-                >
-                  load more
-                </Button>
-              </div>
-            )}
-          </main>
-        </>
-      </SWRConfig>
+            </div>
+          )}
+          {data?.pages?.map((posts) =>
+            posts?.map((p) => <PostComponent key={p.id} post={p} />)
+          )}
+          {!isLoading && (
+            <div className="flex items-center justify-center space-x-2">
+              <Button
+                className="my-3"
+                disabled={!hasNextPage}
+                onClick={() => fetchNextPage()}
+                isLoading={isFetchingNextPage}
+              >
+                load more
+              </Button>
+            </div>
+          )}
+        </main>
+      </>
     </>
   );
 };

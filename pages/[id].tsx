@@ -7,7 +7,7 @@ import { DeleteButton } from "../components/Button";
 import PostComponent from "../components/Post";
 import PostReplies from "../components/PostReplies";
 import { PREVIEW_IMAGE_URL } from "../lib/constants";
-import { useGetPostQuery, useGetPostsInfinite } from "../lib/hooks";
+import { useGetPostQuery } from "../lib/hooks";
 import { getPost } from "../lib/queries";
 import { deletePost } from "../lib/requests";
 import { PostWithAuthorAndLikes } from "../types";
@@ -39,7 +39,6 @@ const PostPage: NextPage<PostPageProps> = (props) => {
   const { id } = router.query;
   const { data: post } = useGetPostQuery(id as string, props.post);
   const [isLoading, setIsLoading] = useState(false);
-  const { mutate: mutateAllPosts } = useGetPostsInfinite();
 
   return (
     <>
@@ -63,7 +62,6 @@ const PostPage: NextPage<PostPageProps> = (props) => {
                   onClick={async () => {
                     setIsLoading(true);
                     await deletePost(post.id);
-                    mutateAllPosts().finally(() => setIsLoading(false));
                     router.back();
                   }}
                   isLoading={isLoading}
