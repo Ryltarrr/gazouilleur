@@ -56,7 +56,7 @@ const PostPage: NextPage<PostPageProps> = (props) => {
       <>
         {post ? (
           <>
-            <PostComponent post={post} initialData={props.post} />
+            <PostComponent post={post} />
             {session?.user.id === post.authorId ? (
               <div className="flex justify-end">
                 <DeleteButton
