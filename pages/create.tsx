@@ -4,14 +4,12 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { PrimaryButton } from "../components/Button";
 import { MAX_POST_LENGTH } from "../lib/constants";
-import { useGetPostsInfiniteQuery } from "../lib/hooks";
 import { savePost } from "../lib/requests";
 
 const CreatePage: NextPage = () => {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { status } = useSession();
-  const { refetch } = useGetPostsInfiniteQuery();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,7 +22,7 @@ const CreatePage: NextPage = () => {
     e.preventDefault();
     setIsLoading(true);
     await savePost({ content });
-    refetch().finally(() => setIsLoading(false));
+    setIsLoading(false);
     router.back();
   };
 
