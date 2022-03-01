@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { dehydrate, DehydratedState, QueryClient } from "react-query";
 import { DeleteButton } from "../components/Button";
 import PostComponent from "../components/Post";
 import PostReplies from "../components/PostReplies";
@@ -10,34 +11,28 @@ import { PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostQuery } from "../lib/hooks";
 import { getPost } from "../lib/queries";
 import { deletePost } from "../lib/requests";
-import { PostWithAuthorAndLikes } from "../types";
 
 type PostPageProps = {
-  post: PostWithAuthorAndLikes & { repliedBy: PostWithAuthorAndLikes[] };
+  dehydratedState: DehydratedState;
 };
 
-export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const postId = context.params?.id as string;
-  const post = await getPost(postId);
-  if (post) {
-    return {
-      props: {
-        post,
-      },
-    };
-  }
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(["post", postId], () => getPost(postId));
+
   return {
-    notFound: true,
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
   };
 };
 
-const PostPage: NextPage<PostPageProps> = (props) => {
+const PostPage: NextPage<PostPageProps> = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
-  const { data: post } = useGetPostQuery(id as string, props.post);
+  const { data: post } = useGetPostQuery(id as string);
   const [isLoading, setIsLoading] = useState(false);
 
   return (
