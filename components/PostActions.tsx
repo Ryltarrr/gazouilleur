@@ -87,7 +87,10 @@ const PostActions = ({
 
   return (
     <div className="flex space-x-5">
-      <button className="group flex items-center transition" onClick={likePost}>
+      <button
+        className="sm:group flex items-center transition"
+        onClick={likePost}
+      >
         <>
           {likeMutation.isLoading ? (
             <RefreshIcon className="mr-1 aspect-square h-4 animate-reverse-spin" />
