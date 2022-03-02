@@ -16,7 +16,9 @@ type PostPageProps = {
   dehydratedState: DehydratedState;
 };
 
-export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+export const getServerSideProps: GetServerSideProps<PostPageProps> = async (
+  context
+) => {
   const postId = context.params?.id as string;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery(["post", postId], () => getPost(postId));
