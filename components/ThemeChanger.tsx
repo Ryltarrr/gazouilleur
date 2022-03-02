@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon } from "@heroicons/react/solid";
+import { DesktopComputerIcon, MoonIcon, SunIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 
 // available themes: 'light', 'dark' and 'system'
@@ -13,14 +13,25 @@ const ThemeChanger = () => {
 
   return (
     <div className="flex space-x-2">
-      {theme === "light" ? (
+      {theme === "light" && (
         <button
           className="rounded-full p-1 text-purple-500 transition hover:bg-purple-100"
           onClick={() => setTheme("dark")}
         >
           <MoonIcon className="h-6 w-6" />
         </button>
-      ) : (
+      )}
+
+      {theme === "dark" && (
+        <button
+          className="rounded-full p-1 text-gray-500 transition hover:bg-gray-100"
+          onClick={() => setTheme("system")}
+        >
+          <DesktopComputerIcon className="h-6 w-6" />
+        </button>
+      )}
+
+      {theme === "system" && (
         <button
           className="rounded-full p-1 text-yellow-500 transition hover:bg-yellow-100"
           onClick={() => setTheme("light")}
