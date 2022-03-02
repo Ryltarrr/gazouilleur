@@ -9,10 +9,12 @@ import PostActions from "./PostActions";
 
 type PostProps = {
   post: PostWithAuthorAndLikes | PostWithAuthorLikesAndReplies;
+  isReply?: boolean;
 };
 
 const PostComponent = ({
-  post: { content, id, likes, author, postRepliedId: isReply },
+  post: { content, id, likes, author, postRepliedId },
+  isReply = false,
 }: PostProps) => {
   return (
     <>
@@ -54,7 +56,7 @@ const PostComponent = ({
           </div>
         </div>
       </Link>
-      <PostActions id={id} likes={likes} postRepliedId={isReply} />
+      <PostActions id={id} likes={likes} postRepliedId={postRepliedId} />
     </>
   );
 };
