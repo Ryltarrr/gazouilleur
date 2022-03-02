@@ -109,10 +109,10 @@ const PostActions = ({
         </>
       </button>
       <button onClick={replyPrompt}>
-        <ReplyIcon className="mr-1 aspect-square h-5 transition hover:text-blue-400" />
+        <ReplyIcon className="mr-1 aspect-square h-5 transition sm:hover:text-blue-400" />
       </button>
       <button className="flex items-center" onClick={sharePost}>
-        <ShareIcon className="mr-1 aspect-square h-5 transition hover:text-blue-400" />
+        <ShareIcon className="mr-1 aspect-square h-5 transition sm:hover:text-blue-400" />
         <>{isCopied ? "Link copied!" : null}</>
       </button>
     </div>
