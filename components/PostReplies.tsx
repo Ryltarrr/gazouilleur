@@ -13,7 +13,7 @@ const PostReplies = ({ replies }: PostRepliesProps) => {
   return (
     <>
       {replies.map((reply) => (
-        <PostComponent key={reply.id} post={reply} />
+        <PostComponent key={reply.id} post={reply} isReply />
       ))}
     </>
   );

@@ -9,13 +9,15 @@ import PostActions from "./PostActions";
 
 type PostProps = {
   post: PostWithAuthorAndLikes | PostWithAuthorLikesAndReplies;
+  isReply?: boolean;
 };
 
 const PostComponent = ({
-  post: { content, id, likes, author, postRepliedId: isReply },
+  post: { content, id, likes, author, postRepliedId },
+  isReply = false,
 }: PostProps) => {
   return (
-    <>
+    <div className="animate-fade-in">
       <Link href={`/${id}`} passHref>
         <div
           key={id}
@@ -54,8 +56,8 @@ const PostComponent = ({
           </div>
         </div>
       </Link>
-      <PostActions id={id} likes={likes} postRepliedId={isReply} />
-    </>
+      <PostActions id={id} likes={likes} postRepliedId={postRepliedId} />
+    </div>
   );
 };
 
