@@ -112,7 +112,12 @@ const PostActions = ({
         <ReplyIcon className="mr-1 aspect-square h-5 transition sm:hover:text-blue-400" />
       </button>
       <button className="flex items-center" onClick={sharePost}>
-        <ShareIcon className="mr-1 aspect-square h-5 transition sm:hover:text-blue-400" />
+        <ShareIcon
+          className={clsx(
+            "mr-1 aspect-square h-5 transition sm:hover:text-blue-400",
+            { "animate-spin-once": isCopied }
+          )}
+        />
         <>{isCopied ? "Link copied!" : null}</>
       </button>
     </div>

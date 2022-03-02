@@ -10,8 +10,18 @@ module.exports = {
     extend: {
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",
+        "fade-in": "fade-in 300ms ease-out",
+        "spin-once": "reverse-spin 300ms linear",
       },
       keyframes: {
+        "fade-in": {
+          from: {
+            opacity: 0,
+          },
+          to: {
+            opacity: 100,
+          },
+        },
         "reverse-spin": {
           from: {
             transform: "rotate(360deg)",

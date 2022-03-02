@@ -17,7 +17,7 @@ const PostComponent = ({
   isReply = false,
 }: PostProps) => {
   return (
-    <>
+    <div className="animate-fade-in">
       <Link href={`/${id}`} passHref>
         <div
           key={id}
@@ -57,7 +57,7 @@ const PostComponent = ({
         </div>
       </Link>
       <PostActions id={id} likes={likes} postRepliedId={postRepliedId} />
-    </>
+    </div>
   );
 };
 
