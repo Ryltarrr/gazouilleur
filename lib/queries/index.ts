@@ -31,3 +31,10 @@ export const getPost = (id: string) => {
     },
   });
 };
+
+export const getUserProfile = (userId: string) => {
+  return prisma.user.findUnique({
+    select: { id: true, image: true, name: true },
+    where: { id: userId },
+  });
+};

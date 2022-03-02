@@ -1,32 +1,37 @@
-import { User } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Image from "next/image";
-import prisma from "../../lib/prisma";
+import { useRouter } from "next/router";
+import { dehydrate, DehydratedState, QueryClient, useQuery } from "react-query";
+import { getUserProfile } from "../../lib/queries";
 
 type ProfilePageProps = {
-  user: User;
+  dehydratedState: DehydratedState;
 };
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
   context
 ) => {
   const userId = context.params?.id as string;
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-  if (user) {
-    return {
-      props: {
-        user,
-      },
-    };
-  }
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(["profile", userId], () =>
+    getUserProfile(userId)
+  );
+
   return {
-    notFound: true,
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
   };
 };
 
-const ProfilePage: NextPage<ProfilePageProps> = ({ user }) => {
+const ProfilePage: NextPage<ProfilePageProps> = () => {
+  const router = useRouter();
+  const { id: userId } = router.query;
+  const { data: user } = useQuery(["profile", userId], async () => {
+    const res = await fetch(`/api/profile/${userId}`);
+    return res.json();
+  });
+
   return (
     <div className="flex items-center space-x-5">
       {user.image ? (
