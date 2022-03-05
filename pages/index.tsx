@@ -68,6 +68,7 @@ const Home: NextPage<Props> = () => {
             posts?.map((p) => <PostComponent key={p.id} post={p} />)
           )}
           <LoadMoreButton
+            isLoading={isLoading}
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
