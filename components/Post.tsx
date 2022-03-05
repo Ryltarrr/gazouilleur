@@ -32,12 +32,14 @@ const PostComponent = ({
           <div>
             {author.image && (
               <div className={clsx("relative aspect-square w-10")}>
-                <Image
-                  layout="fill"
-                  className="rounded-full"
-                  alt="Author profile image"
-                  src={author.image}
-                />
+                <Link passHref href={`/profile/${author.id}`}>
+                  <Image
+                    layout="fill"
+                    className="rounded-full"
+                    alt="Author profile image"
+                    src={author.image}
+                  />
+                </Link>
               </div>
             )}
           </div>

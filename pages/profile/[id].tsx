@@ -40,7 +40,7 @@ const ProfilePage: NextPage<ProfilePageProps> = () => {
     const res = await fetch(`/api/profile/${userId}`);
     return res.json();
   });
-  const { data, isFetchingNextPage, hasNextPage, fetchNextPage } =
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetPostsInfiniteQuery(userId);
   return (
     <>
@@ -61,6 +61,7 @@ const ProfilePage: NextPage<ProfilePageProps> = () => {
         posts?.map((p) => <PostComponent key={p.id} post={p} />)
       )}
       <LoadMoreButton
+        isLoading={isLoading}
         fetchNextPage={fetchNextPage}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
