@@ -3,7 +3,11 @@ import {
   PostWithAuthorAndLikes,
   PostWithAuthorLikesAndReplies,
 } from "../types";
-import { API_POSTS } from "./constants";
+import {
+  API_POSTS,
+  INFINITE_POSTS_QUERY,
+  INFINITE_USER_POSTS_QUERY,
+} from "./constants";
 
 export const useGetPostQuery = (id: string) => {
   return useQuery<PostWithAuthorLikesAndReplies>(["post", id], async () => {
@@ -12,28 +16,32 @@ export const useGetPostQuery = (id: string) => {
   });
 };
 
-const fetchPosts = async ({ pageParam = 0 }) => {
-  let cursor = undefined;
-  if (pageParam !== 0) {
-    cursor = pageParam;
+const fetchPosts = async (
+  { pageParam }: { pageParam?: number },
+  userId?: string
+) => {
+  let params = new URLSearchParams();
+  if (pageParam) {
+    params.append("cursor", pageParam.toString(10));
   }
-  if (!cursor) {
-    const res = await fetch(`${API_POSTS}`);
-    return res.json();
+  if (userId) {
+    params.append("user", userId);
+  }
+
+  let res: Response;
+  if (!params.toString()) {
+    res = await fetch(`${API_POSTS}`);
   } else {
-    const res = await fetch(`${API_POSTS}?cursor=${cursor}`);
-    return res.json();
+    res = await fetch(`${API_POSTS}?${params.toString()}`);
   }
+  return res.json();
 };
 
-export const useGetPostsInfiniteQuery = (
-  initialData?: PostWithAuthorAndLikes[]
-) => {
+export const useGetPostsInfiniteQuery = (userId?: string) => {
   return useInfiniteQuery<PostWithAuthorAndLikes[]>(
-    "postsInfinite",
-    fetchPosts,
+    userId ? [INFINITE_USER_POSTS_QUERY, userId] : INFINITE_POSTS_QUERY,
+    (params) => fetchPosts(params, userId),
     {
-      initialData: { pageParams: [], pages: [initialData || []] },
       getNextPageParam: (lastPage) => {
         if (lastPage && lastPage.length === 0) {
           return undefined;

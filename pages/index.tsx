@@ -1,40 +1,35 @@
+import LoadMoreButton from "./../components/LoadMoreButton";
 import { RefreshIcon } from "@heroicons/react/solid";
 import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import Button from "../components/Button";
+import { dehydrate, DehydratedState, QueryClient } from "react-query";
 import PostComponent from "../components/Post";
-import { API_POSTS, PREVIEW_IMAGE_URL } from "../lib/constants";
+import { INFINITE_POSTS_QUERY, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostsInfiniteQuery } from "../lib/hooks";
 import { getPostsWithAuthorsAndLikes } from "../lib/queries";
-import { PostWithAuthorAndLikes } from "../types";
 
 type Props = {
-  [API_POSTS]: PostWithAuthorAndLikes[];
+  dehydratedState: DehydratedState;
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  query,
-}) => {
-  let cursor = query.cursor;
-  if (typeof cursor === "object") {
-    cursor = cursor[0];
-  }
-
-  const postsAndUsers: PostWithAuthorAndLikes[] =
-    await getPostsWithAuthorsAndLikes(cursor);
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery([INFINITE_POSTS_QUERY], () =>
+    getPostsWithAuthorsAndLikes()
+  );
 
   return {
     props: {
-      [API_POSTS]: postsAndUsers,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
-const Home: NextPage<Props> = (props) => {
+const Home: NextPage<Props> = () => {
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useGetPostsInfiniteQuery(props[API_POSTS]);
+    useGetPostsInfiniteQuery();
   const { status: sessionStatus } = useSession();
 
   return (
@@ -72,18 +67,11 @@ const Home: NextPage<Props> = (props) => {
           {data?.pages?.map((posts) =>
             posts?.map((p) => <PostComponent key={p.id} post={p} />)
           )}
-          {!isLoading && (
-            <div className="flex items-center justify-center space-x-2">
-              <Button
-                className="my-3"
-                disabled={!hasNextPage}
-                onClick={() => fetchNextPage()}
-                isLoading={isFetchingNextPage}
-              >
-                load more
-              </Button>
-            </div>
-          )}
+          <LoadMoreButton
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
         </main>
       </>
     </>
