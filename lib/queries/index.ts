@@ -1,7 +1,10 @@
 import { PAGE_SIZE } from "../constants";
 import prisma from "../prisma";
 
-export const getPostsWithAuthorsAndLikes = (cursor: string | undefined) => {
+export const getPostsWithAuthorsAndLikes = (
+  cursor?: string,
+  userId?: string
+) => {
   return prisma.post.findMany({
     take: PAGE_SIZE,
     skip: cursor ? 1 : 0,
@@ -11,7 +14,7 @@ export const getPostsWithAuthorsAndLikes = (cursor: string | undefined) => {
         }
       : undefined,
     include: { author: true, likes: true },
-    where: { postRepliedId: null },
+    where: { postRepliedId: null, authorId: userId },
     orderBy: { createdAt: "desc" },
   });
 };
