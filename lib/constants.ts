@@ -5,3 +5,5 @@ export const MAX_POST_LENGTH = 280;
 
 export const INFINITE_POSTS_QUERY = "postsInfinite";
 export const INFINITE_USER_POSTS_QUERY = "userPostsInfinite";
+
+export const DEFAULT_LOCALE = "en";

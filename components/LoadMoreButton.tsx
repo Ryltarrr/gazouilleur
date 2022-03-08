@@ -1,3 +1,4 @@
+import { useTranslation } from "next-i18next";
 import Button from "./Button";
 
 type LoadMoreButtonProps = {
@@ -14,6 +15,7 @@ const LoadMoreButton = ({
   isFetchingNextPage,
 }: LoadMoreButtonProps) => {
   const gotNextPage = !!hasNextPage;
+  const { t } = useTranslation("common");
   if (isLoading === false) {
     return (
       <div className="flex items-center justify-center space-x-2">
@@ -23,7 +25,7 @@ const LoadMoreButton = ({
           onClick={() => fetchNextPage()}
           isLoading={isFetchingNextPage}
         >
-          {gotNextPage ? "load more" : "no more post"}
+          {gotNextPage ? t("load-more") : t("no-more-post")}
         </Button>
       </div>
     );

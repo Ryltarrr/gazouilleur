@@ -1,0 +1,14 @@
+{
+  "create-new-post": "Create new post",
+  "sign-in": "Sign in",
+  "sign-out": "Sign out",
+  "delete-post": "Delete post",
+  "post-content": "Content",
+  "publish-post": "Publish",
+  "link-copied": "Link copied!",
+  "no-more-post": "no more post",
+  "load-more": "load more",
+  "loading": "Loading...",
+  "post-reply": "Your reply?",
+  "no-replies": "This post has no replies."
+}
