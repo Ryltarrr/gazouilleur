@@ -4,39 +4,25 @@ import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { dehydrate, DehydratedState, QueryClient } from "react-query";
 import PostComponent from "../components/Post";
-import {
-  DEFAULT_LOCALE,
-  INFINITE_POSTS_QUERY,
-  PREVIEW_IMAGE_URL,
-} from "../lib/constants";
+import { DEFAULT_LOCALE, PREVIEW_IMAGE_URL } from "../lib/constants";
 import { useGetPostsInfiniteQuery } from "../lib/hooks";
-import { getPostsWithAuthorsAndLikes } from "../lib/queries";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-type Props = {
-  dehydratedState: DehydratedState;
-};
+type FrontPageProps = {};
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
+export const getServerSideProps: GetServerSideProps<FrontPageProps> = async ({
   locale = DEFAULT_LOCALE,
 }) => {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery([INFINITE_POSTS_QUERY], () =>
-    getPostsWithAuthorsAndLikes()
-  );
-
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
-const Home: NextPage<Props> = () => {
+const Home: NextPage<FrontPageProps> = () => {
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetPostsInfiniteQuery();
   const { status: sessionStatus } = useSession();
