@@ -7,6 +7,7 @@ import {
 import { Like } from "@prisma/client";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { toggleLike, addToPost } from "../lib/requests";
@@ -21,6 +22,7 @@ const PostActions = ({
   likes: Like[];
   postRepliedId: string | null;
 }) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const likeMutation = useMutation((postId: string) => toggleLike(postId), {
     onSuccess() {
@@ -71,7 +73,7 @@ const PostActions = ({
   };
 
   const replyPrompt = async () => {
-    const answer = window.prompt("Your reply?");
+    const answer = window.prompt(t("post-reply"));
     if (answer) {
       replyMutation.mutate(answer);
     }
@@ -118,7 +120,7 @@ const PostActions = ({
             { "animate-spin-once": isCopied }
           )}
         />
-        <>{isCopied ? "Link copied!" : null}</>
+        <>{isCopied ? t("link-copied") : null}</>
       </button>
     </div>
   );

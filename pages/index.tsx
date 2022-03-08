@@ -6,15 +6,23 @@ import Head from "next/head";
 import Link from "next/link";
 import { dehydrate, DehydratedState, QueryClient } from "react-query";
 import PostComponent from "../components/Post";
-import { INFINITE_POSTS_QUERY, PREVIEW_IMAGE_URL } from "../lib/constants";
+import {
+  DEFAULT_LOCALE,
+  INFINITE_POSTS_QUERY,
+  PREVIEW_IMAGE_URL,
+} from "../lib/constants";
 import { useGetPostsInfiniteQuery } from "../lib/hooks";
 import { getPostsWithAuthorsAndLikes } from "../lib/queries";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 type Props = {
   dehydratedState: DehydratedState;
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  locale = DEFAULT_LOCALE,
+}) => {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery([INFINITE_POSTS_QUERY], () =>
     getPostsWithAuthorsAndLikes()
@@ -22,6 +30,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   return {
     props: {
+      ...(await serverSideTranslations(locale, ["common"])),
       dehydratedState: dehydrate(queryClient),
     },
   };
@@ -31,6 +40,7 @@ const Home: NextPage<Props> = () => {
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetPostsInfiniteQuery();
   const { status: sessionStatus } = useSession();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -53,7 +63,7 @@ const Home: NextPage<Props> = () => {
         transition hover:text-orange-500
         dark:decoration-orange-400 dark:hover:text-orange-400"
               >
-                Create new post
+                {t("create-new-post")}
               </a>
             </Link>
           ) : null}

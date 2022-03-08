@@ -1,0 +1,14 @@
+{
+  "create-new-post": "Écrire un nouveau gazouillis",
+  "sign-in": "Se connecter",
+  "sign-out": "Se déconnecter",
+  "delete-post": "Supprimer le gazouillis",
+  "post-content": "Contenu",
+  "publish-post": "Publier",
+  "link-copied": "Lien copié !",
+  "no-more-post": "plus de gazouillis",
+  "load-more": "charger plus",
+  "loading": "Chargement...",
+  "post-reply": "Votre réponse ?",
+  "no-replies": "Ce gazouillis n'a aucunes réponses."
+}

@@ -3,9 +3,11 @@ import Link from "next/link";
 import ThemeChanger from "./ThemeChanger";
 import Image from "next/image";
 import { LoginIcon, LogoutIcon } from "@heroicons/react/solid";
+import { useTranslation } from "next-i18next";
 
 export default function NavBar() {
   const { data: session, status } = useSession();
+  const { t } = useTranslation();
 
   return (
     <nav className="m-0 flex items-center justify-between p-4">
@@ -27,7 +29,7 @@ export default function NavBar() {
             )}
             <div className="hidden sm:inline">{session?.user?.email}</div>
             <button onClick={() => signOut()}>
-              <span className="mr-2 hidden sm:inline">Sign out</span>
+              <span className="mr-2 hidden sm:inline">{t("sign-out")}</span>
               <LogoutIcon className="inline h-5 w-5" />
             </button>
           </>
@@ -36,12 +38,12 @@ export default function NavBar() {
             {status === "unauthenticated" ? (
               <>
                 <button onClick={() => signIn()}>
-                  <span className="mr-2 hidden sm:inline">Sign in</span>
+                  <span className="mr-2 hidden sm:inline">{t("sign-in")}</span>
                   <LoginIcon className="inline h-5 w-5" />
                 </button>
               </>
             ) : (
-              <div>Loading...</div>
+              <div>{t("loading")}</div>
             )}
           </>
         )}
