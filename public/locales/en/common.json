@@ -10,5 +10,7 @@
   "load-more": "load more",
   "loading": "Loading...",
   "post-reply": "Your reply?",
-  "no-replies": "This post has no replies."
+  "no-replies": "This post has no replies.",
+  "offline-title": "You are offline!",
+  "offline-description": "Please verify that you are connected to the internet."
 }
