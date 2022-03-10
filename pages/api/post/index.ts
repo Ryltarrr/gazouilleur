@@ -7,12 +7,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    let cursor = req.query.cursor;
+    let { cursor, user } = req.query;
     if (typeof cursor === "object") {
       cursor = cursor[0];
     }
+    if (typeof user === "object") {
+      user = user[0];
+    }
     const posts: PostWithAuthorAndLikes[] = await getPostsWithAuthorsAndLikes(
-      cursor
+      cursor,
+      user
     );
     return res.status(200).json(posts);
   } catch (err) {

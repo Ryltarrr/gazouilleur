@@ -10,5 +10,7 @@
   "load-more": "charger plus",
   "loading": "Chargement...",
   "post-reply": "Votre réponse ?",
-  "no-replies": "Ce gazouillis n'a aucunes réponses."
+  "no-replies": "Ce gazouillis n'a aucunes réponses.",
+  "offline-title": "Vous être hors connexion",
+  "offline-description": "Veuillez vérifier que vous êtes connecté à internet."
 }

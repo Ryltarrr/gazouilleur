@@ -1,10 +1,11 @@
 import { GetServerSideProps, NextPage } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { dehydrate, DehydratedState, QueryClient, useQuery } from "react-query";
 import LoadMoreButton from "../../components/LoadMoreButton";
 import PostComponent from "../../components/Post";
-import { INFINITE_USER_POSTS_QUERY } from "../../lib/constants";
+import { DEFAULT_LOCALE, INFINITE_USER_POSTS_QUERY } from "../../lib/constants";
 import { useGetPostsInfiniteQuery } from "../../lib/hooks";
 import { getPostsWithAuthorsAndLikes, getUserProfile } from "../../lib/queries";
 
@@ -12,11 +13,12 @@ type ProfilePageProps = {
   dehydratedState: DehydratedState;
 };
 
-export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({
+  params,
+  locale = DEFAULT_LOCALE,
+}) => {
   const cursor = undefined;
-  const userId = context.params?.id as string;
+  const userId = params?.id as string;
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery(["profile", userId], () =>
     getUserProfile(userId)
@@ -28,6 +30,7 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (
 
   return {
     props: {
+      ...(await serverSideTranslations(locale, ["common"])),
       dehydratedState: dehydrate(queryClient),
     },
   };
